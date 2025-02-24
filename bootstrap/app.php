@@ -11,6 +11,9 @@
 |
 */
 
+use App\Http\Middleware\RoleMiddleware;
+use Illuminate\Contracts\Http\Kernel;
+
 $app = new Illuminate\Foundation\Application(
     $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
 );
