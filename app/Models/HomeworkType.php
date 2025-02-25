@@ -9,7 +9,7 @@ class HomeworkType extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'key'];
 
     public function homeworks()
     {
