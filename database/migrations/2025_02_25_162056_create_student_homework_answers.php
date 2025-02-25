@@ -9,10 +9,10 @@ return new class extends Migration {
     {
         Schema::create('student_homework_answers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('student_homework_id')->constrained('student_homeworks')->onDelete('cascade');
+            $table->foreignId('submission_id')->constrained('homework_submissions')->onDelete('cascade');
             $table->foreignId('question_id')->constrained('homework_questions')->onDelete('cascade');
             $table->jsonb('student_answer');
-            $table->boolean('is_checked')->nullable()->default(false);
+            $table->enum('is_checked', ['pending', 'checked', 'auto-checked'])->default('pending');
             $table->timestamps();
         });
     }

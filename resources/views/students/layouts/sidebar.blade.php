@@ -32,6 +32,7 @@
                 </a>
             </li>
             @include('admin.layouts.homework')
+            @include('students.layouts.student')
         </ul>
     </div>
 </div>

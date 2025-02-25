@@ -7,18 +7,15 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     public function up() {
-        Schema::create('student_homeworks', function (Blueprint $table) {
+        Schema::create('homeworks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('student_id')->constrained('users');
-            $table->foreignId('homework_id')->constrained('homeworks')->onDelete('cascade');
-            $table->text('answers');
-            $table->integer('score')->nullable();
-            $table->string('status')->default('pending');
-            $table->integer('total_questions')->nullable();
-            $table->integer('correct_answers')->nullable();
-            $table->decimal('percentage', 5, 2)->nullable();
+            $table->foreignId('subject_id')->constrained('subjects');
+            $table->foreignId('exercise_id')->nullable();
+            $table->foreignId('type_id')->constrained('homework_types');
+            $table->dateTime('due_date')->nullable();
             $table->timestamps();
         });
+
     }
 
     public function down() {

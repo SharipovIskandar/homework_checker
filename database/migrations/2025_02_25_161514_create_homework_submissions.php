@@ -13,6 +13,8 @@ return new class extends Migration {
             $table->jsonb('answers');
             $table->string('status')->default('pending');
             $table->integer('score')->nullable();
+            $table->integer('total_questions')->nullable();
+            $table->integer('correct_answers')->nullable();
             $table->timestamps();
         });
     }
