@@ -29,31 +29,7 @@
     @else
         @foreach ($datas as $index => $data)
             <tr id="tr_{{ $data->id }}">
-                <td>{{ $datas->perPage() * ($datas->currentPage() - 1) + $loop->iteration }}</td>
-                <td>{{ $data->coder_name ?? ""}}</td>
-                <td>{{ $data->projects }}</td>
-                @php $groupedWorkTime = sumWorkTimeBySprint(json_decode($data->sprints_ball)) @endphp
-                <td class="text-center align-middle">
-                    @foreach($groupedWorkTime as $sprint => $totalWorkTime)
-                        <span class="badge bg-primary d-inline-flex align-items-center justify-content-center"
-                              style="font-size: 1.5rem; min-width: 120px; padding: 0.75rem; border-radius: 8px;">
-                                {{ "$sprint: $totalWorkTime" }}
-                        </span>
-                    @endforeach
-                </td>
 
-                @php $groupedSalary = sumSalariesBySprint(json_decode($data->sprints_sum)) @endphp
-                <td class="text-center align-middle">
-                    @foreach($groupedSalary as $sprint => $totalSalary)
-                        <span class="badge bg-success d-inline-flex align-items-center justify-content-center"
-                              style="font-size: 1.3rem; min-width: 130px; padding: 1rem; border-radius: 12px; background-color: rgb(202, 255, 179); color: gray;">
-                                {{ "$sprint: $totalSalary  UZS" }}
-                        </span>
-                    @endforeach
-                </td>
-
-                <td>{{ number_format($data->total_sum, 0, ', ', ' ') }}</td>
-                <td>{{ number_format($data->total_ball, 0, ', ', ' ') }}</td>
             </tr>
         @endforeach
     @endif

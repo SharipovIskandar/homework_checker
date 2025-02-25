@@ -1,12 +1,12 @@
-@extends('admin.layouts.app')
+@extends('students.layouts.app')
 @section('breadcrumb')
     <!-- begin breadcrumb -->
     <ol class="breadcrumb pull-left">
         <li>
-            <a href="{{ route('admin.dashboard') }}">Статистика</a>
+            <a href="{{ route('students.dashboard') }}">Статистика</a>
         </li>
         <li>
-            <a href="{{ route('admin.developer.reports.index') }}"> Клиент</a>
+            <a href="{{ route('students.developer.reports.index') }}"> Клиент</a>
         </li>
         <li class="active">{{ $label }}</li>
     </ol>
@@ -145,7 +145,7 @@
 
                         <br>
                         <div class="form_footer">
-                            <a href="{{route('admin.developer.reports.index')}}" class="btn btn-warning">Назад</a>
+                            <a href="{{route('students.students.homework.index')}}" class="btn btn-warning">Назад</a>
 
                             <button type="submit" class="btn btn-primary">Сохранить</button>
                         </div>

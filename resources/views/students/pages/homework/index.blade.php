@@ -1,4 +1,4 @@
-    @extends('admin.layouts.app')
+    @extends('students.layouts.app')
     @section('customCss')
     <link href="{{asset('coloradmin/plugins/flag-icon/css/flag-icon.css')}}" rel="stylesheet">
     <link href="{{asset('coloradmin/plugins/switchery/switchery.min.css')}}" rel="stylesheet">
@@ -34,7 +34,7 @@
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive kv-grid-container">
-                        @include('admin.pages.homework._columns', [
+                        @include('students.pages.homework._columns', [
                             'datas' => $datas,
                         ])
                     </div>

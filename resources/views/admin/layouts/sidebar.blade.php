@@ -20,6 +20,12 @@
         </ul>
 
         <ul class="nav">
+            <li class="{{ request()->routeIs('students.students*') ? 'active' : '' }}">
+                <a href="{{ route('students.students.homework.index') }}">
+                    <i class="fa fa-bar-chart-o"></i>
+                    <span>Students homework</span>
+                </a>
+            </li>
             <li class="{{ request()->routeIs('admin.students*') ? 'active' : '' }}">
                 <a href="{{ route('admin.dashboard') }}">
                     <i class="fa fa-bar-chart-o"></i>

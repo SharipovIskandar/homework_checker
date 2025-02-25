@@ -15,7 +15,7 @@ class StudentHomeworkController extends Controller
     {
 
         $datas = $this->modelClass::query()->paginate();
-        return view('admin.pages.homework.index', [
+        return view('students.pages.homework.index', [
             'datas' => $datas,
         ]);
     }
@@ -25,7 +25,7 @@ class StudentHomeworkController extends Controller
         $users = User::all();
         $model = new $this->modelClass();
 
-        return view('admin.pages.homework.create', [
+        return view('students.pages.homework.create', [
             'model' => $model,
             'users' => $users,
         ]);
@@ -35,7 +35,7 @@ class StudentHomeworkController extends Controller
     {
         $result = $projectOverviewService->store($request);
 
-        return redirect()->route('admin.homework.index');
+        return redirect()->route('students.homework.index');
     }
 
     public function edit(string $id)
@@ -43,7 +43,7 @@ class StudentHomeworkController extends Controller
 
         $model = $this->modelClass::findOrFail($id);
         $users = User::all();
-        return view('admin.pages.project-overview.edit', [
+        return view('students.pages.project-overview.edit', [
             'model' => $model,
             'users' => $users,
             'languages' => allLanguage(),
@@ -54,7 +54,7 @@ class StudentHomeworkController extends Controller
     {
         $this->customUpdate($id, $request);
 
-        return redirect()->route('admin.homework.index')
+        return redirect()->route('students.homework.index')
             ->with(['message' => 'Успешно обновлено']);
     }
 

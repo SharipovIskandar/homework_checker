@@ -41,8 +41,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.',], function () {
     })->name('clear_cash');
 });
 
-Route::group(['prefix' => 'student', 'as' => 'student.',], function () {
-    Route::get('homework', [StudentHomeworkController::class, 'index'])->name('student.homework.index');
+Route::group(['prefix' => 'students', 'as' => 'students.',], function () {
+    Route::get('homework', [StudentHomeworkController::class, 'index'])->name('students.homework.index');
 });
 
 require __DIR__ . '/auth.php';
