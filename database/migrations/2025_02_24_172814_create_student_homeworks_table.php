@@ -10,7 +10,7 @@ return new class extends Migration
         Schema::create('homeworks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('subject_id')->constrained('subjects');
-            $table->foreignId('exercise_id')->nullable();
+            $table->string('exercise_id')->nullable();
             $table->foreignId('type_id')->constrained('homework_types');
             $table->dateTime('due_date')->nullable();
             $table->timestamps();

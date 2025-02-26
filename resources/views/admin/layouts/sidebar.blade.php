@@ -38,7 +38,7 @@
                 </a>
             </li>
             @include('admin.layouts.homework')
-            @include('students.layouts.student')
+            @include('admin.layouts.student')
         </ul>
     </div>
 </div>

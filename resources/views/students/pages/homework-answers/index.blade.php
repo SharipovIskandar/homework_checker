@@ -1,4 +1,4 @@
-    @extends('students.layouts.app')
+    @extends('admin.layouts.app')
     @section('customCss')
     <link href="{{asset('coloradmin/plugins/flag-icon/css/flag-icon.css')}}" rel="stylesheet">
     <link href="{{asset('coloradmin/plugins/switchery/switchery.min.css')}}" rel="stylesheet">

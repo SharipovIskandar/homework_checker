@@ -62,9 +62,9 @@
                     <li class="arrow"></li>
                     <li class="divider"></li>
                     <li>
-                        {{-- <form id="form-logout" method="POST" action="{{ route('logout') }}">
+                         <form id="form-logout" method="POST" action="{{ route('logout') }}">
                         @csrf
-                        </form> --}}
+                        </form>
                         <a href="{{ route('logout') }}">
                             {{-- onclick="event.preventDefault(); document.getElementById('form-logout').submit();"> --}}
                             Выйти

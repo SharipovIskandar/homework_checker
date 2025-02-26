@@ -15,6 +15,11 @@
                 <span>Homework</span>
             </a>
         </li>
+        <li class="{{ request()->routeIs('admin.homework-questions*') ? 'active' : '' }}">
+            <a href="{{ route('admin.homework-questions.index') }}">
+                <span>Homework questions</span>
+            </a>
+        </li>
         <li class="{{ request()->routeIs('admin.homework-types*') ? 'active' : '' }}">
             <a href="{{ route('admin.homework-types.index') }}">
                 <span>Homework types</span>

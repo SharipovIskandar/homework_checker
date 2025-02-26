@@ -1,14 +1,17 @@
 <?php
+
 namespace App\Http\Controllers\Auth;
 
-use Illuminate\Auth\Events\Registered;
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Providers\RouteServiceProvider;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
-use App\Models\User;
 
 class RegisteredUserController extends Controller
 {
@@ -25,27 +28,24 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'fullname'  => ['required', 'string'],
-            'phone'     => ['required', 'string', 'unique:users,phone'],
-            'password'  => ['required', 'confirmed', Rules\Password::defaults()],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
-        
+
         $user = User::create([
-            'fullname'  => $request->fullname,
-            'phone'     => $request->phone,
-            'password'  => Hash::make($request->password),
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        if(auth()->user()->role == 'admin')
-            return redirect()->route('admin.dashboard');
-        else 
-            return redirect()->route('home');
+        return redirect(RouteServiceProvider::HOME);
     }
 }

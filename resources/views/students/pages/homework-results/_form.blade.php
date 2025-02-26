@@ -1,4 +1,4 @@
-@extends('students.layouts.app')
+@extends('admin.layouts.app')
 @section('breadcrumb')
     <!-- begin breadcrumb -->
     <ol class="breadcrumb pull-left">

@@ -19,14 +19,35 @@ use App\Http\Controllers\DashboardController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
-Route::group(['prefix' => 'admin', 'as' => 'admin.',], function () {
+Route::group(['prefix' => 'admin', 'as' => 'admin.','middleware' => ['auth']], function () {
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/dashboard', 'index')->name('dashboard');
     });
 
     Route::get('homework', [AdminHomeworkController::class, 'index'])->name('homework.index');
+    Route::get('homework/create', [AdminHomeworkController::class, 'create'])->name('homework.create');
+    Route::post('homework', [AdminHomeworkController::class, 'store'])->name('homework.store');
+    Route::get('homework/{id}/edit', [AdminHomeworkController::class, 'edit'])->name('homework.edit');
+    Route::put('homework/{id}/edit', [AdminHomeworkController::class, 'update'])->name('homework.update');
+    Route::get('homework/{id}/delete', [AdminHomeworkController::class, 'destroy'])->name('homework.delete');
+
+    Route::group(['prefix' => 'homework-questions', 'as' => 'homework-questions.'], function () {
+        Route::controller(AdminHomeworkController::class)->group(function () {
+           Route::get('/', 'index')->name('index');
+           Route::get('create', 'create')->name('create');
+           Route::post('store', 'store')->name('store');
+        });
+    });
 
     Route::get('students', [AdminStudentController::class, 'index'])->name('students.index');
 

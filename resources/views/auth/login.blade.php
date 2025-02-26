@@ -1,56 +1,47 @@
-@extends('auth.layout')
+<x-guest-layout>
+    <!-- Session Status -->
+    <x-auth-session-status class="mb-4" :status="session('status')" />
 
-@section('title', "Login")
+    <form method="POST" action="{{ route('login') }}">
+        @csrf
 
-
-@section('content')
-<!-- begin #page-container -->
-<div id="page-container" class="fade">
-    <!-- begin login -->
-    <div class="login login-v2">
-        <!-- begin brand -->
-        <div class="login-header">
-            <div class="brand">
-                <span class="logo"></span> Progress Solution <small>Введите логин и пароль...</small>
-            </div>
-            <div class="icon">
-                <i class="fa fa-sign-in"></i>
-            </div>
+        <!-- Email Address -->
+        <div>
+            <x-input-label for="email" :value="__('Email')" />
+            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+            <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
-        <!-- end brand -->
 
-        <div class="login-content">
-            <form id="login-form col" action="{{ route('login') }}" method="post">
-                @csrf
-                <div class="form-group m-b-20 field-loginform-phone required col-md-12" style="padding:0">
+        <!-- Password -->
+        <div class="mt-4">
+            <x-input-label for="password" :value="__('Password')" />
 
-                    <input type="text" id="username" class="form-control input-lg inverse-mode no-border" name="username" value="{{old('username')}}" required autofocus placeholder="Имя пользователя" aria-required="true">
+            <x-text-input id="password" class="block mt-1 w-full"
+                            type="password"
+                            name="password"
+                            required autocomplete="current-password" />
 
-                    @error('username')
-                    <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="form-group m-b-20 field-loginform-password required col-md-12" style="padding:0">
-
-                    <input type="password" style="position: relative;" id="inputElementIdOne" class="form-control input-lg inverse-mode no-border" name="password" required autocomplete="current-password" placeholder="Пароль">
-                    <i style="position: absolute; right: 15px; top: 15px; font-size: 16px; cursor: pointer;" id="eye1" onclick="eyeFunction()" class="fa fa-eye"></i>
-                    <i style="position: absolute; right: 15px; top: 15px; font-size: 16px; cursor: pointer;" id="eye1None" onclick="eyeFunction()" class="fa fa-eye-slash"></i>
-                    @error('username')
-                    <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
-                <div class="login-buttons">
-                    <button type="submit" class="btn btn-success btn-block btn-lg" name="login-button">Авторизоваться</button>
-                </div>
-
-
-            </form>
+            <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
-    </div>
-    <!-- end login -->
-    <ul class="login-bg-list clearfix">
-    </ul>
-</div>
-<!-- end page container -->
-@endsection
+
+        <!-- Remember Me -->
+        <div class="block mt-4">
+            <label for="remember_me" class="inline-flex items-center">
+                <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
+                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
+            </label>
+        </div>
+
+        <div class="flex items-center justify-end mt-4">
+            @if (Route::has('password.request'))
+                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
+                    {{ __('Forgot your password?') }}
+                </a>
+            @endif
+
+            <x-primary-button class="ms-3">
+                {{ __('Log in') }}
+            </x-primary-button>
+        </div>
+    </form>
+</x-guest-layout>

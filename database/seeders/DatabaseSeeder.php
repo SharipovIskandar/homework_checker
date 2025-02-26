@@ -14,9 +14,9 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
          \App\Models\User::factory()->create([
-             'name' => 'Iskandar',
+             'username' => 'iskandar',
              'email' => 'iskandar@gmail.com',
-             'password' => Hash::make(12345678),
+             'password' => Hash::make(1234),
          ]);
         $this->call(HomeworkTypeSeeder::class);
         $this->call(RoleSeeder::class);
