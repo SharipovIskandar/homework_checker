@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->integer('score')->nullable();
             $table->integer('total_questions')->nullable();
             $table->integer('correct_answers')->nullable();
+            $table->boolean('is_accepted')->default(false);
             $table->timestamps();
         });
     }

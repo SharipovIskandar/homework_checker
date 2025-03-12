@@ -1,8 +1,6 @@
-@include('admin.pages.homework._form', [
-'subjects' => $subjects,
-'homeworkTypes' => $homeworkTypes,
+@include('students.pages.homework-submissions._form', [
 'model' => $model,
-'route' => route('admin.homework.update', $model),
+'route' => route('student.homework.submissions.update', $model),
 'method' => 'PUT',
 'label' => 'Изменить',
 ])

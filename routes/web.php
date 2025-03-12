@@ -66,6 +66,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/create', 'create')->name('create');
             Route::post('/', 'store')->name('store');
+            Route::get('/{id}/accepted', 'updateIsAccepted')->name('accepted');
             Route::get('/{id}/edit', 'edit')->name('edit');
             Route::put('/{id}/edit', 'update')->name('update');
             Route::delete('/{id}/delete', 'destroy')->name('delete');

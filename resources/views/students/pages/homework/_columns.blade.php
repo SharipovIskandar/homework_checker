@@ -41,6 +41,14 @@
                 </td>
                 <td>{{ $data->homework->task_condition }}</td>
                 <td>{{ $data->homework->due_date }}</td>
+                <td>
+                    @if($data->is_accepted != true)
+                        <a href="{{ route('student.homework.submissions.edit', [$data]) }}" title="Let's go! Do this shit"
+                           class="btn btn-xs btn-success">
+                            <span class="glyphicon glyphicon-eye-open	"></span>
+                        </a>
+                    @endif
+                </td>
             </tr>
         @endforeach
     @endif

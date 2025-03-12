@@ -37,8 +37,10 @@
                     <i class="fa fa-angle-double-left"></i>
                 </a>
             </li>
-            @include('admin.layouts.homework')
-{{--            @include('admin.layouts.student')--}}
+            @if(auth()->user()->role === 'admin')
+                @include('admin.layouts.homework')
+                {{--            @include('admin.layouts.student')--}}
+            @endif
         </ul>
     </div>
 </div>

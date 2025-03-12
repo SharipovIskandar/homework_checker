@@ -8,13 +8,13 @@
         <th>Score</th>
         <th>Due date</th>
         <th>Status</th>
-        <th width="100">Action</th>
+        <th width="150">Action</th>
     </tr>
     </thead>
     <tbody>
     @if($datas->isEmpty())
         <tr>
-            <td colspan="7" class="text-center">
+            <td colspan="8" class="text-center">
                 <div style="padding: 20px;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="currentColor"
                          class="bi bi-database-fill-slash" viewBox="0 0 16 16">
@@ -46,13 +46,18 @@
                 <td>{{ $data->homework->due_date ?? null }}</td>
                 <td>{{ $data->status ?? null }}</td>
                 <td align="center">
-                    <a href="{{ route('admin.homework.edit', [$data]) }}" title="Изменить"
-                       class="btn btn-xs btn-info">
-                        <span class="glyphicon glyphicon-pencil"></span>
-                    </a>
-                    <a class="deleteModal btn btn-xs btn-danger" style="margin-left: 3px;" onclick="deleteModel({{$data->id}}, '/admin/seo/macros/')">
-                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                    </a>
+                    @if($data->is_accepted == false)
+                        <a href="{{ route('admin.homework.edit', [$data]) }}" title="Изменить"
+                           class="btn btn-xs btn-info">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </a>
+                    @endif
+                    @if($data->is_accepted != true)
+                        <a href="{{ route('student.homework.submissions.accepted', [$data]) }}" title="Update"
+                           class="btn btn-xs btn-success">
+                            <span class="glyphicon glyphicon-ok	">Done</span>
+                        </a>
+                    @endif
                 </td>
             </tr>
         @endforeach

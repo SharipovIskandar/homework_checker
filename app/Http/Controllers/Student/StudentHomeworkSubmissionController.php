@@ -9,6 +9,7 @@ use App\Models\HomeworkSubmission;
 use App\Models\User;
 use App\Traits\Crud;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class StudentHomeworkSubmissionController extends Controller
 {
@@ -50,6 +51,8 @@ class StudentHomeworkSubmissionController extends Controller
 
     public function store(Request $request)
     {
+        $request->merge(['student_id' => Auth::id()]);
+
         $this->customStore($request);
 
         return redirect()->route('student.homework.submissions.index');
@@ -57,11 +60,23 @@ class StudentHomeworkSubmissionController extends Controller
 
     public function edit(string $id)
     {
-
         $model = $this->modelClass::findOrFail($id);
+        $questions = HomeworkQuestion::query()
+            ->with(['homework.homeworkTypes'])
+            ->whereHas('homework', function ($query) {
+                $query->where('due_date', '>', now());
+            })
+            ->get();
+
+        if ($questions->isEmpty()) {
+            abort(404, "Homework topilmadi yoki muddati o'tib ketgan.");
+        }
+
         $users = User::all();
-        return view('students.pages.homework-submissions.edit', [
+
+        return view('students.pages.homework-submissions.create', [
             'model' => $model,
+            'questions' => $questions,
             'users' => $users,
         ]);
     }
@@ -79,5 +94,15 @@ class StudentHomeworkSubmissionController extends Controller
         $model = $this->modelClass::findOrFail($id);
         $this->customDelete($id);
         return response()->json(['success' => true, 'tr' => 'tr_' . $id]);
+    }
+
+    public function updateIsAccepted($id)
+    {
+        $model = $this->modelClass::findOrFail($id);
+        $model->is_accepted = true;
+        $model->save();
+
+        return redirect()->back()->with('success', 'Updated successfully');
+
     }
 }
