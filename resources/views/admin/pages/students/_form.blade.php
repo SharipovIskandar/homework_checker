@@ -3,7 +3,7 @@
     <!-- begin breadcrumb -->
     <ol class="breadcrumb pull-left">
         <li>
-            <a href="{{ route('admin.dashboard') }}">Статистика</a>
+            <a href="{{ route('admin.students.index') }}">Статистика</a>
         </li>
         <li>
             <a href="{{ route('admin.developer.reports.index') }}"> Клиент</a>

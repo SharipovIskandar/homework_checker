@@ -4,17 +4,18 @@ namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
 use App\Models\Homework;
+use App\Models\HomeworkQuestion;
 use App\Models\User;
 use Illuminate\Http\Request;
 
 class StudentHomeworkController extends Controller
 {
-    protected string $modelClass = User::class;
+    protected string $modelClass = HomeworkQuestion::class;
 
     public function index()
     {
+        $datas = $this->modelClass::with(['homework'])->paginate();
 
-        $datas = $this->modelClass::query()->paginate();
         return view('students.pages.homework.index', [
             'datas' => $datas,
         ]);

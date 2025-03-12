@@ -10,7 +10,8 @@ class Homework extends Model
     use HasFactory;
 
     protected $table = 'homeworks';
-    protected $fillable = ['subject_id', 'exercise_id', 'type_id', 'due_date'];
+    protected $fillable = ['subject_id', 'exercise_id', 'type_id', 'due_date', 'task_condition'];
+    protected $casts = ['task_condition' => 'array'];
 
     public function subject()
     {
@@ -30,5 +31,10 @@ class Homework extends Model
     public function studentHomeworks()
     {
         return $this->hasMany(StudentHomework::class);
+    }
+
+    public function homeworkTypes()
+    {
+        return $this->hasMany(HomeworkType::class, 'id', 'type_id');
     }
 }

@@ -6,7 +6,7 @@
         <div class="navbar-header">
 
             <div class="image">
-                <a href="{{ route('admin.dashboard') }}" class="navbar-brand">
+                <a href="{{ route('student.homeworks.index') }}" class="navbar-brand">
                     <span>
                         Панель админ
                     </span>

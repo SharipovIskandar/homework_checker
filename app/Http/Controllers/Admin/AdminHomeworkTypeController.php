@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Homework;
+use App\Models\HomeworkType;
 use App\Models\User;
+use App\Traits\Crud;
 use Illuminate\Http\Request;
 
 class AdminHomeworkTypeController extends Controller
 {
-    protected string $modelClass = Homework::class;
+    use Crud;
+    protected string $modelClass = HomeworkType::class;
 
     public function index()
     {
@@ -33,7 +36,7 @@ class AdminHomeworkTypeController extends Controller
 
     public function store(Request $request)
     {
-        $result = $projectOverviewService->store($request);
+        $result = $this->customStore($request);
 
         return redirect()->route('admin.homework-types.index');
     }
@@ -43,14 +46,13 @@ class AdminHomeworkTypeController extends Controller
 
         $model = $this->modelClass::findOrFail($id);
         $users = User::all();
-        return view('admin.pages.project-overview.edit', [
+        return view('admin.pages.homework-types.edit', [
             'model' => $model,
             'users' => $users,
-            'languages' => allLanguage(),
         ]);
     }
 
-    public function update( $request, $id)
+    public function update(Request $request, $id)
     {
         $this->customUpdate($id, $request);
 

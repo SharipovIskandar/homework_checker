@@ -71,7 +71,16 @@
                                 </option>
                             @endforeach
                         </select>
-                        @error('inprogress_time')
+                        @error('type_id')
+                        <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-3" style="margin-bottom: 10px;">
+                        <label class="control-label">Task condition</label>
+                        <input type="text" name="task_condition" class="form-control"
+                               value="{{ old('task_condition') ?? $model->task_condition }}">
+                        @error('task_condition')
                         <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>

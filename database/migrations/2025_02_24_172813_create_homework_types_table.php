@@ -10,7 +10,8 @@ return new class extends Migration
         Schema::create('homework_types', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('key');
+            $table->string('key')->nullable();
+            $table->timestamps();
         });
     }
 

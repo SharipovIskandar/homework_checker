@@ -65,7 +65,7 @@ class AdminHomeworkController extends Controller
         ]);
     }
 
-    public function update( $request, $id)
+    public function update(Request $request, $id)
     {
         $this->customUpdate($id, $request);
 

@@ -9,7 +9,7 @@
     <!-- begin breadcrumb -->
     <ol class="breadcrumb pull-left">
         <li>
-            <a href="{{route('admin.dashboard')}}">
+            <a href="{{route('student.homeworks.index')}}">
                 Главная
             </a>
         </li>
@@ -29,12 +29,15 @@
             <div class="panel panel-inverse">
                 <div class="panel-heading">
                     <div class="panel-heading-btn">
+                        <a href="{{ route('admin.homework-questions.create') }}" title="Создать" class="btn btn-xs btn-success">
+                            <i class="fa fa-plus"></i> Генерировать
+                        </a>
                     </div>
                     <h4 class="panel-title">Отчет о программистах</h4>
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive kv-grid-container">
-                        @include('admin.pages.homework._columns', [
+                        @include('admin.pages.homework-questions._columns', [
                             'datas' => $datas,
                         ])
                     </div>

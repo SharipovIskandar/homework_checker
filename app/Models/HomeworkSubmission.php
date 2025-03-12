@@ -24,4 +24,6 @@ class HomeworkSubmission extends Model
     {
         return $this->belongsTo(Homework::class);
     }
+
+
 }

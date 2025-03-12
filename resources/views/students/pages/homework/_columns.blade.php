@@ -2,12 +2,11 @@
     <thead class="thead-dark">
     <tr>
         <th width="20">№</th>
-        <th>Программист</th>
-        <th>Проекты</th>
-        <th>Баллы в спринте</th>
-        <th>Общая сумма за спринт</th>
-        <th width="100">Общая сумма</th>
-        <th width="100">Общий балл</th>
+        <th>Exercise number</th>
+        <th>Question</th>
+        <th>Question type</th>
+        <th>Due date</th>
+        <th width="100">Actions</th>
     </tr>
     </thead>
     <tbody>
@@ -29,7 +28,19 @@
     @else
         @foreach ($datas as $index => $data)
             <tr id="tr_{{ $data->id }}">
-
+                <td>{{ $datas->perPage() * ($datas->currentPage() - 1) + $loop->iteration }}</td>
+                <td>{{ $data->homework->exercise_id ?? null }}</td>
+                <td>
+                    @if(is_array($data->questions))
+                        @foreach($data->questions as $task => $question)
+                            <strong>{{ $task }}</strong>: {{ htmlspecialchars($question) }} <br>
+                        @endforeach
+                    @else
+                        {{ htmlspecialchars($data->questions) }}
+                    @endif
+                </td>
+                <td>{{ $data->homework->task_condition }}</td>
+                <td>{{ $data->homework->due_date }}</td>
             </tr>
         @endforeach
     @endif

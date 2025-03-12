@@ -20,16 +20,16 @@
         </ul>
 
         <ul class="nav">
-            <li class="{{ request()->routeIs('students.students*') ? 'active' : '' }}">
-                <a href="{{ route('students.students.homework.index') }}">
+            <li class="{{ request()->routeIs('student.homeworks*') ? 'active' : '' }}">
+                <a href="{{ route('student.homeworks.index') }}">
                     <i class="fa fa-bar-chart-o"></i>
                     <span>Students homework</span>
                 </a>
             </li>
-            <li class="{{ request()->routeIs('admin.students*') ? 'active' : '' }}">
-                <a href="{{ route('admin.dashboard') }}">
+            <li class="{{ request()->routeIs('student.homework.submissions.*') ? 'active' : '' }}">
+                <a href="{{ route('student.homework.submissions.index') }}">
                     <i class="fa fa-bar-chart-o"></i>
-                    <span>Students</span>
+                    <span>Students homework submissions</span>
                 </a>
             </li>
             <li>
@@ -38,7 +38,7 @@
                 </a>
             </li>
             @include('admin.layouts.homework')
-            @include('admin.layouts.student')
+{{--            @include('admin.layouts.student')--}}
         </ul>
     </div>
 </div>

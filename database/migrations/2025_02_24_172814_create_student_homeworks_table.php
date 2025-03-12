@@ -11,6 +11,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('subject_id')->constrained('subjects');
             $table->string('exercise_id')->nullable();
+            $table->jsonb('task_condition')->nullable()->after('type_id');
             $table->foreignId('type_id')->constrained('homework_types');
             $table->dateTime('due_date')->nullable();
             $table->timestamps();

@@ -9,7 +9,7 @@
     <!-- begin breadcrumb -->
     <ol class="breadcrumb pull-left">
         <li>
-            <a href="{{route('admin.dashboard')}}">
+            <a href="{{route('student.homeworks.index')}}">
                Home
             </a>
         </li>
@@ -29,6 +29,7 @@
             <div class="panel panel-inverse">
                 <div class="panel-heading">
                     <div class="panel-heading-btn">
+
                     </div>
                     <h4 class="panel-title">Studentlar uchun Vazifalar bajarish joyi</h4>
                 </div>

@@ -25,7 +25,7 @@ class AdminStudentController extends Controller
         $users = User::all();
         $model = new $this->modelClass();
 
-        return view('admin.pages.students.create', [
+        return view('students.pages.homework.create', [
             'model' => $model,
             'users' => $users,
         ]);
@@ -43,7 +43,7 @@ class AdminStudentController extends Controller
 
         $model = $this->modelClass::findOrFail($id);
         $users = User::all();
-        return view('admin.pages.students.edit', [
+        return view('students.pages.homework.edit', [
             'model' => $model,
             'users' => $users,
             'languages' => allLanguage(),
@@ -54,7 +54,7 @@ class AdminStudentController extends Controller
     {
         $this->customUpdate($id, $request);
 
-        return redirect()->route('admin.students.index')
+        return redirect()->route('students.homework.index')
             ->with(['message' => 'Успешно обновлено']);
     }
 

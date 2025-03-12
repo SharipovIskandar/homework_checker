@@ -2,11 +2,11 @@
     <thead class="thead-dark">
     <tr>
         <th width="20">№</th>
-        <th>Subject</th>
+        <th>Task condition</th>
         <th>Exercises</th>
         <th>Exercises type</th>
         <th>Due date</th>
-        <th width="30">Action</th>
+        <th width="100">Action</th>
     </tr>
     </thead>
     <tbody>
@@ -29,7 +29,7 @@
         @foreach($datas as $data)
             <tr id="tr_{{ $data->id }}">
                 <td>{{ $datas->perPage() * ($datas->currentPage() - 1) + $loop->iteration }}</td>
-                <td>{{ $data->subject->name ?? 'null' }}</td>
+                <td>{{ $data->task_condition ?? null }}</td>
                 <td>{{ $data->exercise_id ?? 'null' }}</td>
                 <td>{{ $data->type->name ?? 'null' }}</td>
                 <td>{{ $data->due_date ?? 'null' }}</td>

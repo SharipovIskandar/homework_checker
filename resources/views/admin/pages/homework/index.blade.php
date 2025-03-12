@@ -9,7 +9,7 @@
     <!-- begin breadcrumb -->
     <ol class="breadcrumb pull-left">
         <li>
-            <a href="{{route('admin.dashboard')}}">
+            <a href="{{route('student.homeworks.index')}}">
                 Главная
             </a>
         </li>

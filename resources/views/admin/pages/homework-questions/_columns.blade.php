@@ -2,12 +2,11 @@
     <thead class="thead-dark">
     <tr>
         <th width="20">№</th>
-        <th>Программист</th>
-        <th>Проекты</th>
-        <th>Баллы в спринте</th>
-        <th>Общая сумма за спринт</th>
-        <th width="100">Общая сумма</th>
-        <th width="100">Общий балл</th>
+        <th>Exercise number</th>
+        <th>Question</th>
+        <th>Question type</th>
+        <th>Due date</th>
+        <th width="100">Action</th>
     </tr>
     </thead>
     <tbody>
@@ -30,30 +29,27 @@
         @foreach ($datas as $index => $data)
             <tr id="tr_{{ $data->id }}">
                 <td>{{ $datas->perPage() * ($datas->currentPage() - 1) + $loop->iteration }}</td>
-                <td>{{ $data->coder_name ?? ""}}</td>
-                <td>{{ $data->projects }}</td>
-                @php $groupedWorkTime = sumWorkTimeBySprint(json_decode($data->sprints_ball)) @endphp
-                <td class="text-center align-middle">
-                    @foreach($groupedWorkTime as $sprint => $totalWorkTime)
-                        <span class="badge bg-primary d-inline-flex align-items-center justify-content-center"
-                              style="font-size: 1.5rem; min-width: 120px; padding: 0.75rem; border-radius: 8px;">
-                                {{ "$sprint: $totalWorkTime" }}
-                        </span>
-                    @endforeach
+                <td>{{ $data->homework->exercise_id ?? null }}</td>
+                <td>
+                    @if(is_array($data->questions))
+                        @foreach($data->questions as $task => $question)
+                            <strong>{{ $task }}</strong> {{ htmlspecialchars($question) }} <br>
+                        @endforeach
+                    @else
+                        {{ htmlspecialchars($data->questions) }}
+                    @endif
                 </td>
-
-                @php $groupedSalary = sumSalariesBySprint(json_decode($data->sprints_sum)) @endphp
-                <td class="text-center align-middle">
-                    @foreach($groupedSalary as $sprint => $totalSalary)
-                        <span class="badge bg-success d-inline-flex align-items-center justify-content-center"
-                              style="font-size: 1.3rem; min-width: 130px; padding: 1rem; border-radius: 12px; background-color: rgb(202, 255, 179); color: gray;">
-                                {{ "$sprint: $totalSalary  UZS" }}
-                        </span>
-                    @endforeach
+                <td>{{ $data->homework->task_condition ?? '' }}</td>
+                <td>{{ $data->homework->due_date ?? '' }}</td>
+                <td align="center">
+                    <a href="{{ route('admin.homework.edit', [$data]) }}" title="Изменить"
+                       class="btn btn-xs btn-info">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                    <a class="deleteModal btn btn-xs btn-danger" style="margin-left: 3px;" onclick="deleteModel({{$data->id}}, '/admin/seo/macros/')">
+                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                    </a>
                 </td>
-
-                <td>{{ number_format($data->total_sum, 0, ', ', ' ') }}</td>
-                <td>{{ number_format($data->total_ball, 0, ', ', ' ') }}</td>
             </tr>
         @endforeach
     @endif

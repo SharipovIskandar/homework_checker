@@ -1,7 +1,10 @@
 <li class="has-sub {{
-    request()->routeIs('admin.homework*') ||
-    request()->routeIs('admin.homework-types*') ||
-     request()->routeIs('admin.homework-correct-answers*') ? 'active' : ''}}">
+    request()->routeIs('admin.homework.index') ||
+    request()->routeIs('admin.homework.create') ||
+    request()->routeIs('admin.homework.edit') ||
+      request()->routeIs('admin.homework-questions*') ||
+       request()->routeIs('admin.homework-types*') ? 'active' : ''}}">
+
 
     <a href="javascript:;" class="menu-item">
         <b class="caret pull-right"></b>
@@ -10,7 +13,9 @@
     </a>
 
     <ul class="sub-menu">
-        <li class="{{ request()->routeIs('admin.homework*') ? 'active' : '' }}">
+        <li class="{{ request()->routeIs('admin.homework.index') ||
+                      request()->routeIs('admin.homework.create') ||
+                      request()->routeIs('admin.homework.edit')  ? 'active' : '' }}">
             <a href="{{ route('admin.homework.index') }}">
                 <span>Homework</span>
             </a>
@@ -23,11 +28,6 @@
         <li class="{{ request()->routeIs('admin.homework-types*') ? 'active' : '' }}">
             <a href="{{ route('admin.homework-types.index') }}">
                 <span>Homework types</span>
-            </a>
-        </li>
-        <li class="{{ request()->routeIs('admin.homework-correct-answers*') ? 'active' : '' }}">
-            <a href="{{ route('admin.homework-correct-answers.index') }}">
-                <span>Homework correct answers</span>
             </a>
         </li>
     </ul>

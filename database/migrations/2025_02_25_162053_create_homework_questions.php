@@ -10,9 +10,8 @@ return new class extends Migration {
         Schema::create('homework_questions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('homework_id')->constrained('homeworks')->onDelete('cascade');
-            $table->jsonb('question');
-            $table->jsonb('correct_answer');
-            $table->string('question_type');
+            $table->jsonb('questions')->nullable();
+            $table->jsonb('correct_answers');
             $table->timestamps();
         });
     }
