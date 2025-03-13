@@ -33,7 +33,7 @@
                 <td>
                     @if(is_array($data->questions))
                         @foreach($data->questions as $task => $question)
-                            <strong>{{ $task }}</strong>: {{ htmlspecialchars($question) }} <br>
+                            <strong>{{ $task }}</strong>: {{ $question }} <br>
                         @endforeach
                     @else
                         {{ htmlspecialchars($data->questions) }}
@@ -42,10 +42,18 @@
                 <td>{{ $data->homework->task_condition }}</td>
                 <td>{{ $data->homework->due_date }}</td>
                 <td>
-                    @if($data->is_accepted != true)
-                        <a href="{{ route('student.homework.submissions.edit', [$data]) }}" title="Let's go! Do this shit"
+                    @if(optional($data->homework->homeworkSubmission->first())->is_accepted != true)
+                        <a href="{{ route('student.homework.submissions.edit', [$data]) }}"
+                           title="Let's go! Do this shit"
                            class="btn btn-xs btn-success">
                             <span class="glyphicon glyphicon-eye-open	"></span>
+                        </a>
+                    @endif
+                    @if(optional($data->homework->homeworkSubmission->first())->is_accepted != true)
+                        <a href="{{ route('student.homework.submissions.create')}}"
+                           title="Let's go! Do this shit"
+                           class="btn btn-xs btn-success">
+                            <span class="glyphicon glyphicon-new-window	"></span>
                         </a>
                     @endif
                 </td>

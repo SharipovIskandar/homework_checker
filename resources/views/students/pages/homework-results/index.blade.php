@@ -34,7 +34,7 @@
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive kv-grid-container">
-                        @include('students.pages.homework._columns', [
+                        @include('students.pages.homework-results._columns', [
                             'datas' => $datas,
                         ])
                     </div>

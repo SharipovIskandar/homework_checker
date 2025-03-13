@@ -21,6 +21,32 @@
         }
     </style>
 @endsection
+@section('customCss')
+    <style>
+        .prediction-box {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+        }
+
+        .prediction-box div {
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        .prediction-box div:hover {
+            background: #f0f0f0;
+        }
+
+    </style>
+@endsection
 @section('content')
     <br>
 
@@ -38,10 +64,11 @@
                     <div class="modal-body" id="smallBody">
                         <div class="row">
                             <div class="col-md-12" style="margin-bottom: 10px;">
-                                <label>Homework Types</label>
-                                <select class="form-control" name="homework_id" id="year-select" onchange="loadSprints2()">
+                                <label>Homework Conditions</label>
+                                <select class="form-control" name="homework_id" id="year-select"
+                                        onchange="">
                                     @foreach($homeworks as $homework)
-                                    <option value="">Homework</option>
+                                        <option value="">Homework</option>
                                         <option value="{{ $homework['id'] }}"
                                             {{ (old('task_condition') ?? request('task_condition')) == $homework['id'] ? 'selected' : '' }}>
                                             {{ $homework['task_condition'] }}
@@ -66,6 +93,7 @@
                                 <label class="control-label">Correct ansewers</label>
                                 <textarea name="correct_answers"
                                           class="form-control">{{ old('correct_answers') ?? $model->correct_answers }}</textarea>
+                                <div id="predictions" class="prediction-box"></div>
                                 @error('correct_answers')
                                 <div class="text-danger">{{ $message }}</div>
                                 @enderror
@@ -133,9 +161,88 @@
             var output = document.getElementById(output);
             output.src = URL.createObjectURL(event.target.files[0]);
             output.onload = function () {
-                URL.revokeObjectURL(output.src) // free memory
+                URL.revokeObjectURL(output.src)
             }
         };
+
+        document.addEventListener("DOMContentLoaded", function () {
+            let input = document.querySelector("textarea[name='correct_answers']");
+            let predictionBox = document.getElementById("predictions");
+
+            let replacements = {
+                "is not": "isn't",
+                "are not": "aren't",
+                "do not": "don't",
+                "does not": "doesn't",
+                "cannot": "can't",
+                "will not": "won't",
+                "would not": "wouldn't",
+                "should not": "shouldn't",
+                "he will": "he'll",
+                "they will": "they'll",
+                "I am": "I'm",
+                "you are": "you're",
+                "they are": "they're"
+            };
+
+            input.addEventListener("input", function () {
+                let text = input.value;
+                let sentences = text.split(/[.!?]/);
+                let lastSentence = sentences[sentences.length - 1].trim();
+
+                if (lastSentence.endsWith(" or")) {
+                    let sentenceBeforeOr = lastSentence.slice(0, -3).trim();
+                    showPredictions(sentenceBeforeOr);
+                } else {
+                    hidePredictions();
+                }
+            });
+
+            function showPredictions(sentence) {
+                predictionBox.innerHTML = "";
+                predictionBox.style.opacity = "1";
+
+                let modifiedSentences = getShortenedVersions(sentence);
+
+                if (modifiedSentences.length === 0) {
+                    hidePredictions();
+                    return;
+                }
+
+                modifiedSentences.forEach(shortened => {
+                    let div = document.createElement("div");
+                    div.textContent = shortened;
+                    div.addEventListener("click", function () {
+                        applyPrediction(shortened);
+                    });
+                    predictionBox.appendChild(div);
+                });
+            }
+
+            function getShortenedVersions(sentence) {
+                let possibleSentences = [];
+
+                for (let longForm in replacements) {
+                    if (sentence.includes(longForm)) {
+                        let shortened = sentence.replace(longForm, replacements[longForm]);
+                        possibleSentences.push(shortened);
+                    }
+                }
+
+                return possibleSentences;
+            }
+
+            function hidePredictions() {
+                predictionBox.style.opacity = "0";
+                predictionBox.innerHTML = "";
+            }
+
+            function applyPrediction(selectedText) {
+                input.value += " " + selectedText;
+                hidePredictions();
+                input.focus();
+            }
+        });
     </script>
 
 @endsection

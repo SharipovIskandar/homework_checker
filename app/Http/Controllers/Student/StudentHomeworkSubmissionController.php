@@ -33,6 +33,7 @@ class StudentHomeworkSubmissionController extends Controller
             ->whereHas('homework', function ($query) {
                 $query->where('due_date', '>', now());
             })
+            ->whereDoesntHave('homework.homeworkSubmission')
             ->get();
 
         if ($questions->isEmpty()) {
@@ -53,10 +54,33 @@ class StudentHomeworkSubmissionController extends Controller
     {
         $request->merge(['student_id' => Auth::id()]);
 
-        $this->customStore($request);
+        $homeworkAnswers = $request->input('answers', []);
+        $homeworkId = $request->input('homework_id');
 
-        return redirect()->route('student.homework.submissions.index');
+        if (empty($homeworkAnswers)) {
+            return redirect()->route('student.homework.submissions.index')->with('error', 'Javoblar kiritilmadi.');
+        }
+
+        $homeworkQuestions = HomeworkQuestion::whereIn('homework_id', array_keys($homeworkAnswers))->get()->groupBy('homework_id');
+
+        foreach ($homeworkAnswers as $homeworkId => $answers) {
+            if (empty($answers) || !isset($homeworkQuestions[$homeworkId])) {
+                continue;
+            }
+
+            $submission = HomeworkSubmission::create([
+                'student_id' => Auth::id(),
+                'homework_id' => $homeworkId,
+                'answers' => $answers
+            ]);
+
+
+            $this->updateSubmission($submission, $homeworkQuestions[$homeworkId]);
+        }
+
+        return redirect()->route('student.homework.submissions.index')->with('success', 'Javoblar muvaffaqiyatli saqlandi.');
     }
+
 
     public function edit(string $id)
     {
@@ -100,9 +124,31 @@ class StudentHomeworkSubmissionController extends Controller
     {
         $model = $this->modelClass::findOrFail($id);
         $model->is_accepted = true;
+        $model->status = 'accepted';
         $model->save();
 
         return redirect()->back()->with('success', 'Updated successfully');
 
     }
+
+    protected function updateSubmission(HomeworkSubmission $submission, $homeworkQuestions)
+    {
+        $existingAnswers = is_array($submission->answers) ? $submission->answers : json_decode($submission->answers, true) ?? [];
+
+        $newAnswers = request()?->input('answers', []);
+
+        foreach ($homeworkQuestions as $question) {
+            $taskName = $question->task_name;
+
+            if (isset($newAnswers[$taskName])) {
+                $existingAnswers[$taskName] = $newAnswers[$taskName];
+            }
+        }
+
+        $submission->update([
+            'answers' => $existingAnswers
+        ]);
+    }
+
+
 }

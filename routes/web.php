@@ -6,7 +6,9 @@ use App\Http\Controllers\Admin\AdminHomeworkTypeController;
 use App\Http\Controllers\Admin\AdminStudentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Student\StudentHomeworkController;
+use App\Http\Controllers\Student\StudentHomeworkResultsController;
 use App\Http\Controllers\Student\StudentHomeworkSubmissionController;
+use App\Models\StudentHomeworkResult;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
@@ -48,6 +50,14 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{id}/delete', [AdminHomeworkTypeController::class, 'destroy'])->name('delete');
         });
 
+        Route::group(['prefix' => 'students', 'as' => 'students.'], function () {
+           Route::controller(AdminStudentController::class)->group(function () {
+               Route::get('/', 'index')->name('index');
+               Route::get('/{id}/edit', 'edit')->name('edit');
+               Route::put('/{id}/edit', 'update')->name('update');
+           });
+        });
+
         Route::get('homework-correct-answers', [AdminHomeworkTypeController::class, 'index'])->name('homework-correct-answers.index');
 
 
@@ -71,6 +81,12 @@ Route::middleware('auth')->group(function () {
             Route::put('/{id}/edit', 'update')->name('update');
             Route::delete('/{id}/delete', 'destroy')->name('delete');
         });
+    });
+
+    Route::group(['prefix' => 'student-homework/results', 'as' => 'student.homework.results.',], function () {
+       Route::controller(StudentHomeworkResultsController::class)->group(function () {
+          Route::get('/', 'index')->name('index');
+       });
     });
 });
 

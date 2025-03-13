@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Homework;
 use App\Models\User;
+use App\Traits\Crud;
 use Illuminate\Http\Request;
 
 class AdminStudentController extends Controller
 {
+    use Crud;
+
     protected string $modelClass = User::class;
 
     public function index()
@@ -25,36 +28,29 @@ class AdminStudentController extends Controller
         $users = User::all();
         $model = new $this->modelClass();
 
-        return view('students.pages.homework.create', [
+        return view('admin.pages.students.create', [
             'model' => $model,
             'users' => $users,
         ]);
     }
 
-    public function store(Request $request)
-    {
-        $result = $projectOverviewService->store($request);
-
-        return redirect()->route('admin.students.index');
-    }
 
     public function edit(string $id)
     {
 
         $model = $this->modelClass::findOrFail($id);
         $users = User::all();
-        return view('students.pages.homework.edit', [
+        return view('admin.pages.students.edit', [
             'model' => $model,
             'users' => $users,
-            'languages' => allLanguage(),
         ]);
     }
 
-    public function update( $request, $id)
+    public function update(Request $request, $id)
     {
         $this->customUpdate($id, $request);
 
-        return redirect()->route('students.homework.index')
+        return redirect()->route('admin.students.index')
             ->with(['message' => 'Успешно обновлено']);
     }
 

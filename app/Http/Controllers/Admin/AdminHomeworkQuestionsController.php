@@ -19,7 +19,7 @@ class AdminHomeworkQuestionsController extends Controller
     public function index()
     {
 
-        $datas = $this->modelClass::query()->with('homework')->paginate();
+        $datas = $this->modelClass::query()->with('homework')->orderByDesc('id')->paginate();
         return view('admin.pages.homework-questions.index', [
             'datas' => $datas,
         ]);

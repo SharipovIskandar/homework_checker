@@ -30,23 +30,24 @@
             <tr id="tr_{{ $data->id }}">
                 <td>{{ $datas->perPage() * ($datas->currentPage() - 1) + $loop->iteration }}</td>
                 <td>{{ $data->homework->exercise_id ?? null }}</td>
+                <td>{{ $data->homework->task_condition ?? '' }}</td>
                 <td>
                     @if(is_array($data->questions))
                         @foreach($data->questions as $task => $question)
-                            <strong>{{ $task }}</strong> {{ htmlspecialchars($question) }} <br>
+                            <strong>{{ $task }}</strong> {{ $question }} <br>
                         @endforeach
                     @else
                         {{ htmlspecialchars($data->questions) }}
                     @endif
                 </td>
-                <td>{{ $data->homework->task_condition ?? '' }}</td>
                 <td>{{ $data->homework->due_date ?? '' }}</td>
                 <td align="center">
                     <a href="{{ route('admin.homework.edit', [$data]) }}" title="Изменить"
                        class="btn btn-xs btn-info">
                         <span class="glyphicon glyphicon-pencil"></span>
                     </a>
-                    <a class="deleteModal btn btn-xs btn-danger" style="margin-left: 3px;" onclick="deleteModel({{$data->id}}, '/admin/seo/macros/')">
+                    <a class="deleteModal btn btn-xs btn-danger" style="margin-left: 3px;"
+                       onclick="deleteModel({{$data->id}}, '/admin/seo/macros/')">
                         <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                     </a>
                 </td>

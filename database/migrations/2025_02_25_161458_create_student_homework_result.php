@@ -12,6 +12,7 @@ return new class extends Migration {
             $table->foreignId('homework_id')->constrained('homeworks')->onDelete('cascade');
             $table->integer('total_questions');
             $table->integer('correct_answers');
+            $table->jsonb('incorrect_answers');
             $table->integer('score');
             $table->timestamps();
         });

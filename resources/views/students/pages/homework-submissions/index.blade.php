@@ -29,9 +29,6 @@
             <div class="panel panel-inverse">
                 <div class="panel-heading">
                     <div class="panel-heading-btn">
-                        <a href="{{ route('student.homework.submissions.create') }}" title="Создать" class="btn btn-xs btn-success">
-                            <i class="fa fa-plus"></i> Генерировать
-                        </a>
                     </div>
                     <h4 class="panel-title">Отчет о программистах</h4>
                 </div>

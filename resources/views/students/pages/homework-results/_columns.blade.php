@@ -2,12 +2,11 @@
     <thead class="thead-dark">
     <tr>
         <th width="20">№</th>
-        <th>Программист</th>
-        <th>Проекты</th>
-        <th>Баллы в спринте</th>
-        <th>Общая сумма за спринт</th>
-        <th width="100">Общая сумма</th>
-        <th width="100">Общий балл</th>
+        <th>Exercise number</th>
+        <th>Question type</th>
+        <th>Correct answers count</th>
+        <th>Incorrect answers</th>
+        <th>Due date</th>
     </tr>
     </thead>
     <tbody>
@@ -29,7 +28,23 @@
     @else
         @foreach ($datas as $index => $data)
             <tr id="tr_{{ $data->id }}">
-
+                <td>{{ $datas->perPage() * ($datas->currentPage() - 1) + $loop->iteration }}</td>
+                <td>{{ $data->homework->exercise_id ?? null }}</td>
+                <td>{{ $data->homework->task_condition ?? '' }}</td>
+                <td>{{ $data->correct_answers ?? '' }}</td>
+                <td>
+                    @if(is_array($data->incorrect_answers))
+                        @foreach($data->incorrect_answers as $item)
+                            <strong>{{ $item['question'] }}</strong>:
+                            <span style="color: red;">{{ $item['user_answer'] }}</span>
+                            <span style="color: green;">(To‘g‘ri javob: {{ $item['correct_answer'] }})</span>
+                            <br>
+                        @endforeach
+                    @else
+                        {{ htmlspecialchars($data->incorrect_answers) }}
+                    @endif
+                </td>
+                <td>{{ $data->homework->due_date ?? '' }}</td>
             </tr>
         @endforeach
     @endif

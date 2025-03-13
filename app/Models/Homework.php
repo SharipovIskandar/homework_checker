@@ -37,4 +37,9 @@ class Homework extends Model
     {
         return $this->hasMany(HomeworkType::class, 'id', 'type_id');
     }
+
+    public function homeworkSubmission()
+    {
+        return $this->hasMany(HomeworkSubmission::class);
+    }
 }

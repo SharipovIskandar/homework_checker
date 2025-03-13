@@ -14,7 +14,7 @@ class AdminHomeworkSubmissions extends Controller
     public function index()
     {
 
-        $datas = $this->modelClass::query()->paginate();
+        $datas = $this->modelClass::query()->orderByDesc('id')->paginate();
         return view('admin.pages.homework.index', [
             'datas' => $datas,
         ]);

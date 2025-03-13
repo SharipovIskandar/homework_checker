@@ -32,15 +32,26 @@
                     <span>Students homework submissions</span>
                 </a>
             </li>
+
+            <li class="{{ request()->routeIs('student.homework.results.index') ? 'active' : '' }}">
+                <a href="{{ route('student.homework.results.index') }}">
+                    <i class="fa fa-bar-chart-o"></i>
+                    <span>Students homework results</span>
+                </a>
+            </li>
+            <li class="{{ request()->routeIs('admin.students.*') ? 'active' : '' }}">
+                <a href="{{ route('admin.students.index') }}">
+                    <i class="fa fa-bar-chart-o"></i>
+                    <span>Students</span>
+                </a>
+            </li>
+                @include('admin.layouts.homework')
+                {{--            @include('admin.layouts.student')--}}
             <li>
                 <a href="javascript:;" class="sidebar-minify-btn" data-click="sidebar-minify">
                     <i class="fa fa-angle-double-left"></i>
                 </a>
             </li>
-            @if(auth()->user()->role === 'admin')
-                @include('admin.layouts.homework')
-                {{--            @include('admin.layouts.student')--}}
-            @endif
         </ul>
     </div>
 </div>

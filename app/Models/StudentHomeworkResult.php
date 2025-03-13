@@ -9,7 +9,11 @@ class StudentHomeworkResult extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['student_id', 'homework_id', 'total_questions', 'correct_answers', 'score'];
+    protected $fillable = ['student_id', 'homework_id', 'total_questions', 'correct_answers', 'score', 'incorrect_answers'];
+
+    protected $casts = [
+        'incorrect_answers' => 'array',
+    ];
 
     public function student()
     {

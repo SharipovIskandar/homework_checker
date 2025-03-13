@@ -14,7 +14,7 @@ class StudentHomeworkController extends Controller
 
     public function index()
     {
-        $datas = $this->modelClass::with(['homework'])->paginate();
+        $datas = $this->modelClass::with(['homework.homeworkSubmission'])->orderByDesc('id')->paginate();
 
         return view('students.pages.homework.index', [
             'datas' => $datas,

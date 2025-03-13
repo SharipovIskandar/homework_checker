@@ -23,6 +23,7 @@ class AdminHomeworkController extends Controller
     public function index()
     {
         $datas = $this->modelClass::with(['subject', 'type'])
+            ->orderBy('id', 'desc')
             ->paginate();
         return view('admin.pages.homework.index', [
             'datas' => $datas,

@@ -5,7 +5,6 @@
         <th>Exercise number</th>
         <th>Task condition</th>
         <th>My answers</th>
-        <th>Score</th>
         <th>Due date</th>
         <th>Status</th>
         <th width="150">Action</th>
@@ -36,13 +35,12 @@
                 <td>
                     @if(is_array($data->answers))
                         @foreach($data->answers as $task => $answer)
-                            <strong>{{ $task }}</strong>: {{ htmlspecialchars($answer) }} <br>
+                            <strong>{{ $task }}</strong>: {{ $answer }} <br>
                         @endforeach
                     @else
-                        {{ htmlspecialchars($data->$answer) }}
+                        {{ ($data->$answer ?? '') }}
                     @endif
                 </td>
-                <td>{{ $data->score ?? null }}</td>
                 <td>{{ $data->homework->due_date ?? null }}</td>
                 <td>{{ $data->status ?? null }}</td>
                 <td align="center">
