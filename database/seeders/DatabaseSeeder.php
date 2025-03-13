@@ -13,13 +13,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-         \App\Models\User::factory()->create([
-             'username' => 'iskandar',
-             'email' => 'iskandar@gmail.com',
-             'password' => Hash::make(1234),
-         ]);
+
         $this->call(HomeworkTypeSeeder::class);
         $this->call(RoleSeeder::class);
+        \App\Models\User::factory()->create([
+            'username' => 'iskandar',
+            'email' => 'iskandar@gmail.com',
+            'password' => Hash::make(1234),
+            'role_id' => 1
+        ]);
         $this->call(SubjectSeeder::class);
     }
 }

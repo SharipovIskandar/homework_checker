@@ -47,7 +47,7 @@
                         <span class="glyphicon glyphicon-pencil"></span>
                     </a>
                     <a class="deleteModal btn btn-xs btn-danger" style="margin-left: 3px;"
-                       onclick="deleteModel({{$data->id}}, '/admin/seo/macros/')">
+                       onclick="deleteModel({{$data->id}}, '/admin/homework-questions/{{ $data->id }}/delete')">
                         <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                     </a>
                 </td>

@@ -31,13 +31,14 @@ Route::middleware('auth')->group(function () {
             Route::post('/', [AdminHomeworkController::class, 'store'])->name('store');
             Route::get('/{id}/edit', [AdminHomeworkController::class, 'edit'])->name('edit');
             Route::put('/{id}/edit', [AdminHomeworkController::class, 'update'])->name('update');
-            Route::get('/{id}/delete', [AdminHomeworkController::class, 'destroy'])->name('delete');
+            Route::delete('/{id}/delete', [AdminHomeworkController::class, 'destroy'])->name('delete');
         });
         Route::group(['prefix' => 'homework-questions', 'as' => 'homework-questions.'], function () {
             Route::controller(AdminHomeworkQuestionsController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::get('create', 'create')->name('create');
                 Route::post('store', 'store')->name('store');
+                Route::delete('/{id}/delete', 'destroy')->name('delete');
             });
         });
 
@@ -88,6 +89,11 @@ Route::middleware('auth')->group(function () {
           Route::get('/', 'index')->name('index');
        });
     });
+});
+
+Route::get('/migrate-refresh', function () {
+    Artisan::call('migrate:fresh --seed');
+    return 'Database refreshed and seeders executed successfully!';
 });
 
 require __DIR__ . '/auth.php';

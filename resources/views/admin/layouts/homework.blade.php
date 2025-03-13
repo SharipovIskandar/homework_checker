@@ -8,7 +8,7 @@
 
     <a href="javascript:;" class="menu-item">
         <b class="caret pull-right"></b>
-        <i class="glyphicon glyphicon-dashboard"></i>
+        <i class="glyphicon glyphicon-wrench"></i>
         <span>Homework Controller</span>
     </a>
 
