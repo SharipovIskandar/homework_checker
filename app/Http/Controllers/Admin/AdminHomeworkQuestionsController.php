@@ -8,7 +8,9 @@ use App\Models\HomeworkQuestion;
 use App\Models\User;
 use App\Traits\Crud;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use thiagoalessio\TesseractOCR\TesseractOCR;
 
 class AdminHomeworkQuestionsController extends Controller
 {
@@ -105,5 +107,59 @@ class AdminHomeworkQuestionsController extends Controller
         $model = $this->modelClass::findOrFail($id);
         $this->customDelete($id);
         return response()->json(['success' => true, 'tr' => 'tr_' . $id]);
+    }
+
+    public function processImage(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        $image = $request->file('image');
+
+        $tempPath = $image->getRealPath();
+
+        $ocr = new TesseractOCR($tempPath);
+        $text = $ocr->run();
+
+        return response()->json([
+            'success' => true,
+            'text' => $text
+        ]);
+    }
+
+    public function generateCorrectAnswers(Request $request)
+    {
+        Log::info('Generate Correct Answers called with data:', [
+            'request_data' => $request->all(),
+            'headers' => $request->headers->all(),
+        ]);
+        Log::info('User auth check: ', ['authenticated' => auth()->check()]);
+        Log::info('Middlewaredan keyin: ', ['user' => auth()->user()]);
+        Log::info('Session data:', session()->all());
+
+        $request->validate([
+            'homework_id' => 'required',
+            'questions' => 'required',
+        ]);
+
+        $apiKey = env('GEMINI_API_KEY');
+        $url = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=$apiKey";
+
+        $prompt = "Given the following homework condition: \"{$request->homework_id}\" and the question: \"{$request->questions}\", generate the correct answers.";
+
+        $response = Http::withOptions([
+            'Content-Type' => 'application/json',
+            'verify' => false,
+        ])->post($url, [
+            "contents" => [
+                ["parts" => [["text" => $prompt]]]
+            ]
+        ]);
+
+        $data = $response->json();
+        $answer = $data['candidates'][0]['content']['parts'][0]['text'] ?? 'No answer generated.';
+
+        return response()->json(['correct_answers' => $answer]);
     }
 }

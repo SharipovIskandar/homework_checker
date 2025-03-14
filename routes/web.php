@@ -38,6 +38,8 @@ Route::middleware('auth')->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::get('create', 'create')->name('create');
                 Route::post('store', 'store')->name('store');
+                Route::post('/process-image', 'processImage');
+                Route::post('/generate-correct-answers', 'generateCorrectAnswers')->name('generate.correct.answers');
                 Route::delete('/{id}/delete', 'destroy')->name('delete');
             });
         });

@@ -82,7 +82,7 @@
 
                             <div class="col-md-6" style="margin-bottom: 10px;">
                                 <label class="control-label">Questions</label>
-                                <textarea name="questions"
+                                <textarea id="questionsTextarea" name="questions"
                                           class="form-control">{{ old('questions') ?? $model->questions }}</textarea>
                                 @error('questions')
                                 <div class="text-danger">{{ $message }}</div>
@@ -90,13 +90,22 @@
                             </div>
 
                             <div class="col-md-6" style="margin-bottom: 10px;">
-                                <label class="control-label">Correct ansewers</label>
-                                <textarea name="correct_answers"
-                                          class="form-control">{{ old('correct_answers') ?? $model->correct_answers }}</textarea>
+                                <label class="control-label">Correct Answers</label>
+                                <textarea id="correctAnswersTextarea" name="correct_answers" class="form-control">{{ old('correct_answers') ?? $model->correct_answers }}</textarea>
                                 <div id="predictions" class="prediction-box"></div>
+                                <button type="button" id="generateCorrectAnswers" class="btn btn-primary" style="margin-top:10px;">
+                                    Generate Correct Answers
+                                </button>
                                 @error('correct_answers')
                                 <div class="text-danger">{{ $message }}</div>
                                 @enderror
+                            </div>
+
+                            <div class="col-md-12" style="margin-bottom: 10px;">
+                                <label class="control-label">Upload Image</label>
+                                <input type="file" name="image" class="form-control" id="imageUpload" accept="image/*">
+                                <img id="pastedImagePreview" src="" alt="Pasted Image" style="max-width: 100%; margin-top: 10px; display: none;">
+                                <button id="applyImageText" class="btn btn-primary" style="margin-top: 10px; display: none;">Apply</button>
                             </div>
 
                         </div>
@@ -104,7 +113,7 @@
                         <div class="form_footer">
                             <a href="{{route('admin.homework-questions.index')}}" class="btn btn-warning">Назад</a>
 
-                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                            <button type="button" class="btn btn-primary">Сохранить</button>
                         </div>
                     </div>
                 </form>
@@ -243,6 +252,109 @@
                 input.focus();
             }
         });
+
+        document.getElementById('imageUpload').addEventListener('change', function (event) {
+            uploadImage(event.target.files[0]);
+        });
+
+        document.addEventListener("paste", function(event) {
+            let items = (event.clipboardData || event.originalEvent.clipboardData).items;
+            for (let item of items) {
+                if (item.kind === 'file' && item.type.startsWith('image/')) {
+                    let blob = item.getAsFile();
+                    let fileInput = document.getElementById("imageUpload");
+
+                    let dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(blob);
+                    fileInput.files = dataTransfer.files;
+
+                    let reader = new FileReader();
+                    reader.onload = function(e) {
+                        let imgPreview = document.getElementById("pastedImagePreview");
+                        imgPreview.src = e.target.result;
+                        imgPreview.style.display = "block";
+                        document.getElementById("applyImageText").style.display = "block";
+                    };
+                    reader.readAsDataURL(blob);
+
+                    event.preventDefault();
+                }
+            }
+        });
+
+        document.getElementById("applyImageText").addEventListener("click", function() {
+            event.preventDefault();
+
+            let fileInput = document.getElementById("imageUpload");
+            if (fileInput.files.length === 0) {
+                alert("Iltimos, rasm yuklang yoki paste qiling.");
+                return;
+            }
+            uploadImage(fileInput.files[0]);
+        });
+
+        function uploadImage(file) {
+            let formData = new FormData();
+            formData.append('image', file);
+
+            fetch('/admin/homework-questions/process-image', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        let questionsTextarea = document.getElementById("questionsTextarea");
+                        let currentText = questionsTextarea.value;
+                        questionsTextarea.value = currentText ? currentText + "\n" + data.text : data.text;
+                    } else {
+                        alert('Error processing image');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        document.getElementById('generateCorrectAnswers').addEventListener('click', function(event) {
+            event.preventDefault();
+
+            let homeworkCondition = document.getElementById('year-select').value;
+            let questions = document.getElementById('questionsTextarea').value;
+
+            if (!homeworkCondition || !questions) {
+                alert("Iltimos, Homework Conditions va Questions maydonlarini to‘ldiring!");
+                return;
+            }
+
+            let csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            let url = "/admin/homework-questions/generate-correct-answers";
+
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": csrfToken
+                },
+                body: JSON.stringify({
+                    homework_id: homeworkCondition,
+                    questions: questions
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Server xatosi!");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('correctAnswersTextarea').value = data.correct_answers;
+                })
+                .catch(error => console.error("Error:", error));
+        });
+
+
     </script>
 
 @endsection
