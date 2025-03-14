@@ -94,7 +94,7 @@ class AdminHomeworkQuestionsController extends Controller
         ]);
     }
 
-    public function update( $request, $id)
+    public function update($request, $id)
     {
         $this->customUpdate($id, $request);
 
@@ -116,37 +116,63 @@ class AdminHomeworkQuestionsController extends Controller
         ]);
 
         $image = $request->file('image');
-
         $tempPath = $image->getRealPath();
 
         $ocr = new TesseractOCR($tempPath);
         $text = $ocr->run();
 
+        $lines = explode("\n", $text);
+        $formattedText = [];
+        $counter = 1;
+
+        foreach ($lines as $line) {
+            $line = trim($line);
+
+            if (empty($line)) continue;
+
+            if (!preg_match('/^\d+\./', $line)) {
+                $line = "{$counter}. " . ucfirst($line);
+                $counter++;
+            }
+
+            if (!preg_match('/[.?]$/', $line)) {
+                $line .= '.';
+            }
+
+            $formattedText[] = $line;
+        }
+
         return response()->json([
             'success' => true,
-            'text' => $text
+            'text' => implode("\n", $formattedText)
         ]);
     }
 
+
+
     public function generateCorrectAnswers(Request $request)
     {
-        Log::info('Generate Correct Answers called with data:', [
-            'request_data' => $request->all(),
-            'headers' => $request->headers->all(),
-        ]);
-        Log::info('User auth check: ', ['authenticated' => auth()->check()]);
-        Log::info('Middlewaredan keyin: ', ['user' => auth()->user()]);
-        Log::info('Session data:', session()->all());
-
         $request->validate([
             'homework_id' => 'required',
             'questions' => 'required',
         ]);
 
+        $homework = Homework::find($request->homework_id);
+
+        if (!$homework) {
+            return response()->json(['error' => 'Homework not found.'], 404);
+        }
+
+        $taskCondition = $homework->task_condition;
+
         $apiKey = env('GEMINI_API_KEY');
         $url = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=$apiKey";
 
-        $prompt = "Given the following homework condition: \"{$request->homework_id}\" and the question: \"{$request->questions}\", generate the correct answers.";
+        // AI ga toza va aniq so‘rov berish
+        $prompt = "Answer the following question strictly based on the given homework condition without any additional explanation.
+    \nHomework condition: \"$taskCondition\"
+    \nQuestion: \"{$request->questions}\"
+    \nProvide only the correct answer.";
 
         $response = Http::withOptions([
             'Content-Type' => 'application/json',
@@ -160,6 +186,7 @@ class AdminHomeworkQuestionsController extends Controller
         $data = $response->json();
         $answer = $data['candidates'][0]['content']['parts'][0]['text'] ?? 'No answer generated.';
 
-        return response()->json(['correct_answers' => $answer]);
+        return response()->json(['correct_answers' => trim($answer)]);
     }
+
 }
