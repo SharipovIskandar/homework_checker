@@ -6,15 +6,26 @@ use App\Http\Controllers\Controller;
 use App\Models\Homework;
 use App\Models\HomeworkQuestion;
 use App\Models\User;
+use App\Traits\Scopes;
 use Illuminate\Http\Request;
 
 class StudentHomeworkController extends Controller
 {
+    use Scopes;
+
     protected string $modelClass = HomeworkQuestion::class;
 
     public function index()
     {
-        $datas = $this->modelClass::with(['homework.homeworkSubmission'])->orderByDesc('id')->paginate();
+        $datas = $this->modelClass::with(['homework.homeworkSubmission'])
+            ->when(request('due_date') === 'future', function ($query) {
+                $query->whereHas('homework', function ($homeworkQuery) {
+                    $homeworkQuery->where('due_date', '>', now());
+                });
+            })
+            ->whereHasEqual('homework', 'exercise_id')
+            ->orderByDesc('id')
+            ->paginate();
 
         return view('students.pages.homework.index', [
             'datas' => $datas,
@@ -51,7 +62,7 @@ class StudentHomeworkController extends Controller
         ]);
     }
 
-    public function update( $request, $id)
+    public function update($request, $id)
     {
         $this->customUpdate($id, $request);
 

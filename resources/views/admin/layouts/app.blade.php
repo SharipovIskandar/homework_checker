@@ -165,8 +165,8 @@
         });
     }
 
-    function deleteModel(id, url) {
-        let route = url + id;
+    function deleteModel(url) {
+        let route = url;
         Swal.fire({
             title: 'Вы уверены?',
             text: "Вы не сможете это вернуть!",

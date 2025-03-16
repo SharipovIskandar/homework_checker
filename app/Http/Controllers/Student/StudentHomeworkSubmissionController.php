@@ -8,19 +8,28 @@ use App\Models\HomeworkQuestion;
 use App\Models\HomeworkSubmission;
 use App\Models\User;
 use App\Traits\Crud;
+use App\Traits\Scopes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class StudentHomeworkSubmissionController extends Controller
 {
-    use Crud;
+    use Crud, Scopes;
 
     protected string $modelClass = HomeworkSubmission::class;
 
     public function index()
     {
 
-        $datas = $this->modelClass::query()->paginate();
+        $datas = $this->modelClass::query()
+            ->when(request('due_date') === 'future', function ($query) {
+                $query->whereHas('homework', function ($homeworkQuery) {
+                    $homeworkQuery->where('due_date', '>', now());
+                });
+            })
+            ->whereHasEqual('homework', 'exercise_id')
+            ->orderByDesc('id')
+            ->paginate();
         return view('students.pages.homework-submissions.index', [
             'datas' => $datas,
         ]);

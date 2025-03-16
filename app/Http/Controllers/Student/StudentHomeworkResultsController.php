@@ -16,7 +16,13 @@ class StudentHomeworkResultsController extends Controller
 
         $datas = $this->modelClass::query()
             ->with('homework')
-            ->orderBy('id', 'desc')
+            ->when(request('due_date') === 'future', function ($query) {
+                $query->whereHas('homework', function ($homeworkQuery) {
+                    $homeworkQuery->where('due_date', '>', now());
+                });
+            })
+            ->whereHasEqual('homework', 'exercise_id')
+            ->orderByDesc('id')
             ->paginate();
         return view('students.pages.homework-results.index', [
             'datas' => $datas,

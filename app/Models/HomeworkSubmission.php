@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\Scopes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class HomeworkSubmission extends Model
 {
-    use HasFactory;
+    use HasFactory, Scopes;
 
     protected $fillable = ['student_id', 'homework_id', 'answers', 'status', 'score'];
 

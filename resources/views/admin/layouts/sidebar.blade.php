@@ -46,6 +46,13 @@
                         <span>Students</span>
                     </a>
                 </li>
+                <li class="{{ request()->routeIs('admin.vocabularies.*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.vocabularies.index') }}">
+                        <i class="glyphicon glyphicon-volume-up
+"></i>
+                        <span>Vocabularies</span>
+                    </a>
+                </li>
                 @include('admin.layouts.homework')
                 {{--            @include('admin.layouts.student')--}}
                 <li>

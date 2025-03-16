@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\Scopes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Homework extends Model
 {
-    use HasFactory;
+    use HasFactory, Scopes;
 
     protected $table = 'homeworks';
     protected $fillable = ['subject_id', 'exercise_id', 'type_id', 'due_date', 'task_condition'];

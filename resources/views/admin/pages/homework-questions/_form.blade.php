@@ -113,7 +113,7 @@
                         <div class="form_footer">
                             <a href="{{route('admin.homework-questions.index')}}" class="btn btn-warning">Назад</a>
 
-                            <button type="button" class="btn btn-primary">Сохранить</button>
+                            <button type="submit" class="btn btn-primary">Сохранить</button>
                         </div>
                     </div>
                 </form>

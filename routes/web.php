@@ -4,6 +4,8 @@ use App\Http\Controllers\Admin\AdminHomeworkController;
 use App\Http\Controllers\Admin\AdminHomeworkQuestionsController;
 use App\Http\Controllers\Admin\AdminHomeworkTypeController;
 use App\Http\Controllers\Admin\AdminStudentController;
+use App\Http\Controllers\Admin\AdminVocabularyController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Student\StudentHomeworkController;
 use App\Http\Controllers\Student\StudentHomeworkResultsController;
@@ -24,6 +26,17 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], function () {
+
+        Route::post('/vocabulary/process-image', [ImageController::class, 'processImage']);
+
+        Route::group(['prefix' => 'vocabularies', 'as' => 'vocabularies.'], function () {
+            Route::get('/', [AdminVocabularyController::class, 'index'])->name('index');
+            Route::get('/create', [AdminVocabularyController::class, 'create'])->name('create');
+            Route::post('/store', [AdminVocabularyController::class, 'store'])->name('store');
+            Route::get('/{id}/edit', [AdminVocabularyController::class, 'edit'])->name('edit');
+            Route::post('/{id}/update', [AdminVocabularyController::class, 'update'])->name('update');
+            Route::delete('/{id}/destroy', [AdminVocabularyController::class, 'destroy'])->name('destroy');
+        });
 
         Route::group(['prefix' => 'homework', 'as' => 'homework.'], function () {
             Route::get('/', [AdminHomeworkController::class, 'index'])->name('index');
@@ -54,11 +67,11 @@ Route::middleware('auth')->group(function () {
         });
 
         Route::group(['prefix' => 'students', 'as' => 'students.'], function () {
-           Route::controller(AdminStudentController::class)->group(function () {
-               Route::get('/', 'index')->name('index');
-               Route::get('/{id}/edit', 'edit')->name('edit');
-               Route::put('/{id}/edit', 'update')->name('update');
-           });
+            Route::controller(AdminStudentController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/{id}/edit', 'edit')->name('edit');
+                Route::put('/{id}/edit', 'update')->name('update');
+            });
         });
 
         Route::get('homework-correct-answers', [AdminHomeworkTypeController::class, 'index'])->name('homework-correct-answers.index');
@@ -87,9 +100,9 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::group(['prefix' => 'student-homework/results', 'as' => 'student.homework.results.',], function () {
-       Route::controller(StudentHomeworkResultsController::class)->group(function () {
-          Route::get('/', 'index')->name('index');
-       });
+        Route::controller(StudentHomeworkResultsController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+        });
     });
 });
 

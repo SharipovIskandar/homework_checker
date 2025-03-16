@@ -8,7 +8,7 @@
         <h4 class="panel-title">Поиск</h4>
     </div>
     <div class="panel-body" id="search-div">
-        <form method="get" action="{{ route('student.homework.submissions.index') }}" id="search-form">
+        <form method="get" action="{{ route('student.homeworks.index') }}" id="search-form">
             @csrf
             <div class="row">
                 <div class="col-md-5">

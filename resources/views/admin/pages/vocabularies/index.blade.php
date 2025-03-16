@@ -1,5 +1,5 @@
-@extends('admin.layouts.app')
-@section('customCss')
+    @extends('admin.layouts.app')
+    @section('customCss')
     <link href="{{asset('coloradmin/plugins/flag-icon/css/flag-icon.css')}}" rel="stylesheet">
     <link href="{{asset('coloradmin/plugins/switchery/switchery.min.css')}}" rel="stylesheet">
     <link href="{{asset('coloradmin/css/animate.min.css')}}" rel="stylesheet">
@@ -24,19 +24,20 @@
 @section('content')
     <!-- begin page-header -->
     <div class="row">
-        <div class="col-md-12">
-            @include('students.pages.homework-submissions.search')
-        </div>
+
         <div class="col-md-12">
             <div class="panel panel-inverse">
                 <div class="panel-heading">
                     <div class="panel-heading-btn">
+                        <a href="{{ route('admin.vocabularies.create') }}" title="Создать" class="btn btn-xs btn-success">
+                            <i class="fa fa-plus"></i> Генерировать
+                        </a>
                     </div>
                     <h4 class="panel-title">Отчет о программистах</h4>
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive kv-grid-container">
-                        @include('students.pages.homework-submissions._columns', [
+                        @include('admin.pages.vocabularies._columns', [
                             'datas' => $datas,
                         ])
                     </div>
