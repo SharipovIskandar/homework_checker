@@ -1,5 +1,5 @@
-@extends('admin.layouts.app')
-@section('customCss')
+    @extends('admin.layouts.app')
+    @section('customCss')
     <link href="{{asset('coloradmin/plugins/flag-icon/css/flag-icon.css')}}" rel="stylesheet">
     <link href="{{asset('coloradmin/plugins/switchery/switchery.min.css')}}" rel="stylesheet">
     <link href="{{asset('coloradmin/css/animate.min.css')}}" rel="stylesheet">
@@ -9,7 +9,7 @@
     <!-- begin breadcrumb -->
     <ol class="breadcrumb pull-left">
         <li>
-            <a href="{{route('student.homeworks.index')}}">
+            <a href="{{route('student.vocabularies.index')}}">
                 Главная
             </a>
         </li>
@@ -24,19 +24,15 @@
 @section('content')
     <!-- begin page-header -->
     <div class="row">
-        <div class="col-md-12">
-            @include('students.pages.homework-submissions.search')
-        </div>
+
         <div class="col-md-12">
             <div class="panel panel-inverse">
                 <div class="panel-heading">
-                    <div class="panel-heading-btn">
-                    </div>
                     <h4 class="panel-title">Отчет о программистах</h4>
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive kv-grid-container">
-                        @include('students.pages.homework-submissions._columns', [
+                        @include('students.pages.vocabulary-practise._columns', [
                             'datas' => $datas,
                         ])
                     </div>

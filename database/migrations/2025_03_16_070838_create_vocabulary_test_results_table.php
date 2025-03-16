@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->integer('correct_answers')->default(0);
             $table->jsonb('incorrect_answers');
+            $table->integer('total_vocabularies')->default(0);
+            $table->boolean('is_accepted')->default(false);
             $table->timestamps();
         });
 

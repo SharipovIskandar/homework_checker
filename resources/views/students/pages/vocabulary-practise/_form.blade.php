@@ -2,59 +2,90 @@
 
 @section('breadcrumb')
     <ol class="breadcrumb pull-left">
-        <li>
-            <a href="{{ route('student.homeworks.index') }}">Main</a>
-        </li>
-        <li class="active">Homework Submission</li>
+        <li><a href="{{ route('student.vocabularies.index') }}">Студент Вокаб</a></li>
+        <li class="active">{{ $label }}</li>
     </ol>
     <br>
 @endsection
 
-@section('content')
-    <br>
+@section('customCss')
+    <style>
+        video {
+            width: 100%;
+            max-width: 500px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+        }
 
+        #word-box {
+            font-size: 30px;
+            font-weight: bold;
+            text-align: center;
+            color: #2c3e50;
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .btn-container button {
+            margin: 0 10px;
+            padding: 10px 20px;
+            font-size: 18px;
+        }
+
+        #status-box {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        #heard-word {
+            text-align: center;
+            font-size: 20px;
+            color: #555;
+            margin-top: 10px;
+        }
+    </style>
+@endsection
+
+@section('content')
     <div class="panel panel-inverse">
         <div class="panel-heading">
-            <h4 class="panel-title">Homework Submission</h4>
+            <h4 class="panel-title">{{ $label }}</h4>
         </div>
-        <div class="panel-body">
-            <div class="table-responsive kv-grid-container">
-                <form method="post" action="{{ route('student.homework.submissions.store') }}" enctype="multipart/form-data">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="row">
-                            @foreach ($questions as $question)
-                                <div class="col-md-12">
-                                    <h4><strong>Mashq turi:</strong> {{ $question['homework']['homeworkTypes'][0]['name'] ?? null }}</h4>
-                                    <p><strong>Shart:</strong> {{ $question['homework']['task_condition'] ?? null }}</p>
-                                </div>
+        <div class="panel-body text-center">
+            <video id="video" autoplay playsinline></video>
+            <p id="word-box">Boshlash uchun "Start" tugmasini bosing</p>
 
-                                @foreach ($question['questions'] as $task_name => $task_value)
-                                    <div class="form-group position-relative">
-                                        <label class="w-100">{{ $task_name }}
-                                            <span class="position-absolute" style="right: 10px; color: #888;">{{ $task_value }}</span>
-                                        </label>
-                                        <input type="text"
-                                               name="answers[{{ $question['homework']['id'] }}][{{ $task_name }}]"
-                                               class="form-control"
-                                               value="{{ old('answers.' . $question['homework']['id'] . '.' . $task_name,
-                                    is_array($model['answers'] ?? null)
-                                    ? ($model['answers'][$question['homework']['id']][$task_name] ?? '')
-                                    : (json_decode($model['answers'] ?? '{}', true)[$question['homework']['id']][$task_name] ?? '')) }}"
-                                               required>
-                                    </div>
-                                @endforeach
-                            @endforeach
-                        </div>
+            <div id="face-status-box">🔍 Yuz aniqlash statusi...</div>
+            <div id="live-speech">🔊 Jonli nutq...</div>
 
-                        <br>
-                        <div class="form_footer">
-                            <a href="{{ route('student.homeworks.index') }}" class="btn btn-warning">Назад</a>
-                            <button type="submit" class="btn btn-primary">Сохранить</button>
-                        </div>
-                    </div>
-                </form>
+            <p id="status-box"></p>
+            <p id="heard-word"></p>
+
+            <div class="btn-container">
+                <button id="startTest" class="btn btn-success">Start</button>
+                <button id="stopTest" class="btn btn-danger" disabled>Stop</button>
+            </div>
+
+            <div id="word-data" style="display:none;">{{ json_encode($model->word) }}</div>
+
+            <div id="result-route" style="display:none;">
+                {{ route('student.vocabularies.storeResult', $model) }}
             </div>
         </div>
     </div>
+@endsection
+
+@section('customJs')
+    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.min.js"></script>
+    <script src="{{ asset('js/vocabularyTest.js') }}"></script>
 @endsection

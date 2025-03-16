@@ -10,6 +10,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Student\StudentHomeworkController;
 use App\Http\Controllers\Student\StudentHomeworkResultsController;
 use App\Http\Controllers\Student\StudentHomeworkSubmissionController;
+use App\Http\Controllers\Student\StudentVocabularyTestController;
 use App\Models\StudentHomeworkResult;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,13 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+
+    Route::prefix('student/vocabularies')->middleware(['auth'])->group(function () {
+        Route::get('/', [StudentVocabularyTestController::class, 'index'])->name('student.vocabularies.index');
+        Route::get('/{id}/start', [StudentVocabularyTestController::class, 'startTest'])->name('student.vocabularies.start');
+        Route::post('/{id}/result', [StudentVocabularyTestController::class, 'storeTestResult'])->name('student.vocabularies.storeResult');
+    });
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

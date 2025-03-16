@@ -1,7 +1,5 @@
-@include('students.pages.homework-submissions._form',[
-'route' => route('student.homework.submissions.store'),
+@include('students.pages.vocabulary-practise._form',[
+'route' => route('student.vocabularies.storeResult', $model),
 'method' => 'POST',
-// 'langs' => $langs,
-// 'translateList' => $translateList,
 'label' => 'Сохранить',
 ])

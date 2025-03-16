@@ -34,7 +34,7 @@
         <div class="panel-body">
             <div class="table-responsive kv-grid-container">
                 <form method="post" action="{{ $route }}" enctype="multipart/form-data">
-                    @if($method == "PUT")
+                    @if($method == "POST")
                         @method($method)
                     @endif
                     @csrf
@@ -44,8 +44,8 @@
                             <div class="col-md-12" style="margin-bottom: 10px;">
                                 <label class="control-label">Слово (Word)</label>
                                 <textarea name="word[]" id="wordTextarea" class="form-control" rows="3">
-    {{ old('word') ?? ($model->word[0] ?? '') }}
-</textarea>
+                                    {{ old('word') ?? ($model->word[0] ?? '') }}
+                                </textarea>
                                 <br>
                                 <img id="imagePreview" src="" style="max-width: 100%; display: none;"
                                      alt="Pasted Image">
@@ -58,8 +58,16 @@
                                 @enderror
                             </div>
 
+                            <div class="col-md-4" style="margin-bottom: 10px;">
+                                <label class="control-label">Total vocabularies</label>
+                                <input type="text" name="total_vocabularies" class="form-control"
+                                       value="{{ old('total_vocabularies') ?? $model->total_vocabularies }}" >
+                                @error('total_vocabularies')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
 
-                            <div class="col-md-12" style="margin-bottom: 10px;">
+                            <div class="col-md-4" style="margin-bottom: 10px;">
                                 <label class="control-label">Уровень (Level)</label>
                                 <input type="text" name="level" class="form-control"
                                        value="{{ old('level') ?? $model->level }}">
@@ -68,7 +76,7 @@
                                 @enderror
                             </div>
 
-                            <div class="col-md-12" style="margin-bottom: 10px;">
+                            <div class="col-md-4" style="margin-bottom: 10px;">
                                 <label class="control-label">Срок выполнения (Due Date)</label>
                                 <input type="datetime-local" name="due_date" class="form-control"
                                        value="{{ old('due_date') ?? $model->due_date }}">
@@ -141,7 +149,10 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
-                                document.getElementById("applyText").setAttribute("data-text", data.text);
+                                document.getElementById("wordTextarea").value = data.text;
+
+                                let totalVocabulariesInput = document.querySelector("input[name='total_vocabularies']");
+                                totalVocabulariesInput.value = data.total_vocabularies; // Update the total vocabularies field
                             } else {
                                 alert("Rasmni o'qishda xatolik yuz berdi!");
                             }
@@ -152,13 +163,6 @@
                 }
             }
         });
-
-        document.getElementById("applyText").addEventListener("click", function () {
-            let wordTextarea = document.getElementById("wordTextarea");
-            let text = this.getAttribute("data-text");
-            wordTextarea.value = text;
-        });
-
 
     </script>
 

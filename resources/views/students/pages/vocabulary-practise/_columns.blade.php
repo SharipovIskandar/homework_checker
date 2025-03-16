@@ -1,20 +1,38 @@
+@section('customCss')
+    <style>
+        .scrollable-td {
+            max-height: 200px;
+            overflow-y: auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            width: 250px;
+            padding: 5px;
+        }
+
+        .word-box {
+            background: #f8f9fa;
+            padding: 5px 10px;
+            border-radius: 5px;
+            white-space: nowrap;
+            border: 1px solid #ddd;
+        }
+    </style>
+@endsection
 <table class="table table-bordered table-striped">
     <thead class="thead-dark">
     <tr>
         <th width="20">№</th>
-        <th>Exercise number</th>
-        <th>Task condition</th>
-        <th>My answers</th>
+        <th>Words</th>
+        <th>Level</th>
         <th>Due date</th>
-        <th>Status</th>
-        <th width="150">Action</th>
-
+        <th width="90">Action</th>
     </tr>
     </thead>
     <tbody>
     @if($datas->isEmpty())
         <tr>
-            <td colspan="8" class="text-center">
+            <td colspan="7" class="text-center">
                 <div style="padding: 20px;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="currentColor"
                          class="bi bi-database-fill-slash" viewBox="0 0 16 16">
@@ -31,32 +49,34 @@
         @foreach ($datas as $index => $data)
             <tr id="tr_{{ $data->id }}">
                 <td>{{ $datas->perPage() * ($datas->currentPage() - 1) + $loop->iteration }}</td>
-                <td>{{ $data->homework->exercise_id ?? null }}</td>
-                <td>{{ $data->homework->task_condition ?? null }}</td>
-                <td>
-                    @if(is_array($data->answers))
-                        @foreach($data->answers as $task => $answer)
-                            <strong>{{ $task }}</strong>: {{ $answer }} <br>
-                        @endforeach
-                    @else
-                        {{ ($data->$answer ?? '') }}
-                    @endif
+                <td class="scrollable-td">
+                    @php
+                        $words = is_string($data->word) ? json_decode($data->word, true) : $data->word;
+                        $lines = explode("\r\n", $words[0] ?? $words);
+                    @endphp
+
+                    @foreach($lines as $line)
+                        @if(!empty($line) && Str::contains($line, '=>'))
+                            @php
+                                $parts = explode(' => ', $line, 2);
+                                $eng = trim($parts[0] ?? '');
+                                $uz = trim($parts[1] ?? '');
+                            @endphp
+                            <span class="word-box"><strong>{{ $eng }}</strong> - {{ $uz }}</span>
+                        @elseif(!empty($line))
+                            <span class="word-box"><strong>{{ trim($line, '**') }}</strong></span>
+                        @endif
+                    @endforeach
                 </td>
-                <td>{{ $data->homework->due_date ?? null }}</td>
-                <td>{{ $data->status ?? null }}</td>
+
+                <td>{{ $data->level }}</td>
+                <td>{{ $data->due_date }}</td>
+
                 <td align="center">
-                    @if($data->is_accepted == false)
-                        <a href="{{ route('admin.homework.edit', [$data]) }}" title="Изменить"
-                           class="btn btn-xs btn-info">
-                            <span class="glyphicon glyphicon-pencil"></span>
-                        </a>
-                    @endif
-                    @if($data->is_accepted != true)
-                        <a href="{{ route('student.homework.submissions.accepted', [$data]) }}" title="Update"
-                           class="btn btn-xs btn-success">
-                            <span class="glyphicon glyphicon-ok	">Done</span>
-                        </a>
-                    @endif
+                    <a href="{{ route('student.vocabularies.start', [$data]) }}" title="Do"
+                       class="btn btn-xs btn-info">
+                        <span class="glyphicon glyphicon-new-window	"></span>
+                    </a>
                 </td>
             </tr>
         @endforeach

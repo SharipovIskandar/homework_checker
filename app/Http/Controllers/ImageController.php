@@ -18,9 +18,12 @@ class ImageController extends Controller
         $words = $this->extractTextFromImage($image);
         $translatedWords = $this->translateWords($words);
 
+        $totalVocabularies = count($words);
+
         return response()->json([
             'success' => true,
             'text' => $translatedWords,
+            'total_vocabularies' => $totalVocabularies,
         ]);
     }
 
@@ -41,7 +44,7 @@ class ImageController extends Controller
         $apiKey = env('GEMINI_API_KEY');
         $url = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=$apiKey";
 
-        $prompt = "Translate the following words from English to Uzbek in the format 'word => translation': \n" . implode(", ", $words);
+        $prompt = "Translate the following words from English to Uzbek in the format 'word => translation': \n" . implode(", ", $words) . "\n\nPlease also include the total number of only the english words at the end.";
 
         $response = Http::withOptions([
             'Content-Type' => 'application/json',
@@ -55,9 +58,9 @@ class ImageController extends Controller
         $data = json_decode($response->getBody(), true);
         $text = $data['candidates'][0]['content']['parts'][0]['text'] ?? 'Tarjima topilmadi';
 
+        // Clean up the translation
         $text = preg_replace('/^\* /m', '', $text);
 
         return $text;
     }
-
 }

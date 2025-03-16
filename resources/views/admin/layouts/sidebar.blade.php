@@ -39,6 +39,12 @@
                     <span>Students homework results</span>
                 </a>
             </li>
+            <li class="{{ request()->routeIs('student.vocabularies.*') ? 'active' : '' }}">
+                <a href="{{ route('student.vocabularies.index') }}">
+                    <i class="glyphicon glyphicon-volume-up"></i>
+                    <span>Vocabulary practise</span>
+                </a>
+            </li>
             @if(auth()->user()->role->name == 'admin')
                 <li class="{{ request()->routeIs('admin.students.*') ? 'active' : '' }}">
                     <a href="{{ route('admin.students.index') }}">
@@ -48,8 +54,7 @@
                 </li>
                 <li class="{{ request()->routeIs('admin.vocabularies.*') ? 'active' : '' }}">
                     <a href="{{ route('admin.vocabularies.index') }}">
-                        <i class="glyphicon glyphicon-volume-up
-"></i>
+                        <i class="glyphicon glyphicon-volume-up"></i>
                         <span>Vocabularies</span>
                     </a>
                 </li>

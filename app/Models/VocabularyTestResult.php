@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class VocabularyTestResult extends Model
 {
 
-    protected $fillable = ['vocabulary_id', 'user_id', 'correct_answers', 'incorrect_answers'];
+    protected $fillable = ['vocabulary_id', 'user_id', 'correct_answers', 'incorrect_answers', 'total_vocabularies', 'is_accepted'];
 
     protected $casts = [
         'incorrect_answers' => 'array',
