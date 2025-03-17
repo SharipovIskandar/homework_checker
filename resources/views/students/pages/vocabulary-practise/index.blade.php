@@ -10,11 +10,11 @@
     <ol class="breadcrumb pull-left">
         <li>
             <a href="{{route('student.vocabularies.index')}}">
-                Главная
+                Home
             </a>
         </li>
         <li class="active">
-            Отчет о программистах
+            Vocabulary practice
         </li>
     </ol>
     <br>
@@ -28,7 +28,7 @@
         <div class="col-md-12">
             <div class="panel panel-inverse">
                 <div class="panel-heading">
-                    <h4 class="panel-title">Отчет о программистах</h4>
+                    <h4 class="panel-title">Vocabulary practice</h4>
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive kv-grid-container">

@@ -10,11 +10,11 @@
     <ol class="breadcrumb pull-left">
         <li>
             <a href="{{route('student.homeworks.index')}}">
-                Главная
+                Home
             </a>
         </li>
         <li class="active">
-            Отчет о программистах
+            Homework types
         </li>
     </ol>
     <br>
@@ -33,7 +33,7 @@
                             <i class="fa fa-plus"></i> Генерировать
                         </a>
                     </div>
-                    <h4 class="panel-title">Отчет о программистах</h4>
+                    <h4 class="panel-title">Homework types</h4>
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive kv-grid-container">

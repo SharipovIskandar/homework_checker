@@ -2,5 +2,5 @@
 'model' => $model,
 'route' => route('student.homework.submissions.update', $model),
 'method' => 'PUT',
-'label' => 'Изменить',
+'label' => 'Edit',
 ])

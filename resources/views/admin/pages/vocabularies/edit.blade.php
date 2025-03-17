@@ -2,5 +2,5 @@
 'model' => $model,
 'route' => route('admin.vocabularies.update', $model),
 'method' => 'POST',
-'label' => 'Изменить',
+'label' => 'Edit',
 ])

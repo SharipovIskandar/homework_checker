@@ -67,13 +67,14 @@
                                 <label>Homework Conditions</label>
                                 <select class="form-control" name="homework_id" id="year-select"
                                         onchange="">
+                                    <option value="">Homework</option>
                                     @foreach($homeworks as $homework)
-                                        <option value="">Homework</option>
                                         <option value="{{ $homework['id'] }}"
                                             {{ (old('task_condition') ?? request('task_condition')) == $homework['id'] ? 'selected' : '' }}>
                                             {{ $homework['task_condition'] }}
                                         </option>
                                     @endforeach
+
                                 </select>
                                 @error('homework_id')
                                 <div class="text-danger">{{ $message }}</div>

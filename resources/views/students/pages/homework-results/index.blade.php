@@ -14,7 +14,7 @@
             </a>
         </li>
         <li class="active">
-            Studentlar uchun Vazifalar bajarish joyi
+            Students homework results
         </li>
     </ol>
     <br>
@@ -33,7 +33,7 @@
                 <div class="panel-heading">
                     <div class="panel-heading-btn">
                     </div>
-                    <h4 class="panel-title">Studentlar uchun Vazifalar bajarish joyi</h4>
+                    <h4 class="panel-title">Students homework results</h4>
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive kv-grid-container">

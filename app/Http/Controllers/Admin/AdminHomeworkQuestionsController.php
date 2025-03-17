@@ -127,14 +127,26 @@ class AdminHomeworkQuestionsController extends Controller
 
         foreach ($lines as $line) {
             $line = trim($line);
-
             if (empty($line)) continue;
 
-            if (!preg_match('/^\d+\./', $line)) {
-                $line = "{$counter}. " . ucfirst($line);
-                $counter++;
+            if (preg_match('/^\d+\./', $line) || preg_match('/^\d+\)/', $line) || preg_match('/^\d+\-/', $line)) {
+                $formattedText[] = ucfirst($line);
+                continue;
             }
 
+            if (preg_match('/^[A-D][\)\.\-]/', $line)) {
+                $formattedText[] = $line;
+                continue;
+            }
+
+            if (preg_match('/\d+\.$/', $line)) {
+                $line = preg_replace('/\d+\.$/', '', $line);
+            }
+
+            $line = "{$counter}. " . ucfirst($line);
+            $counter++;
+
+            // Oxirida nuqta yo‘q bo‘lsa, qo‘shamiz
             if (!preg_match('/[.?]$/', $line)) {
                 $line .= '.';
             }
@@ -147,7 +159,6 @@ class AdminHomeworkQuestionsController extends Controller
             'text' => implode("\n", $formattedText)
         ]);
     }
-
 
 
     public function generateCorrectAnswers(Request $request)

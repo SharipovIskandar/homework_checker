@@ -10,7 +10,7 @@
     <ol class="breadcrumb pull-left">
         <li>
             <a href="{{route('student.homeworks.index')}}">
-                Главная
+                Home
             </a>
         </li>
         <li class="active">

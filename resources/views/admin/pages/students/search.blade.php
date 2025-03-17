@@ -6,7 +6,7 @@
                 <i class="fa fa-minus"></i>
             </a>
         </div>
-        <h4 class="panel-title">Поиск</h4>
+        <h4 class="panel-title">Search</h4>
     </div>
     <div class="panel-body" id="search-div">
         <form method="get" action="{{ route('admin.developer.reports.index') }}" id="search-form">
@@ -56,10 +56,10 @@
                 <!-- Поиск -->
                 <div class="col-12 col-md-6 col-lg-1 mb-3">
                     <div class="form-group">
-                        <label>Поиск</label>
+                        <label>Search</label>
                         <br>
                         <button type="submit" class="btn btn-warning btn-sm w-100">
-                            <i class="fa fa-filter fa-fw"></i> Поиск
+                            <i class="fa fa-filter fa-fw"></i> Search
                         </button>
                     </div>
                 </div>
@@ -67,9 +67,9 @@
                 <!-- Очистить -->
                 <div class="col-12 col-md-6 col-lg-1 mb-3">
                     <div class="form-group">
-                        <label>Очистить</label>
+                        <label>Clear</label>
                         <button type="submit" class="btn btn-secondary btn-sm w-100" onclick="clearAllInputs()">
-                            <i class="glyphicon glyphicon-trash"></i> Очистить
+                            <i class="glyphicon glyphicon-trash"></i> Clear
                         </button>
                     </div>
                 </div>
@@ -182,14 +182,14 @@
     function setCurrentMonthYear() {
         const now = new Date();
         const currentYear = now.getFullYear();
-        const currentMonth = now.getMonth() + 1; 
+        const currentMonth = now.getMonth() + 1;
 
         document.getElementById('year-select').value = currentYear;
         document.getElementById('month-select').value = currentMonth;
 
         updateUrlParams();
         loadSprints2();
-        document.getElementById('search-form').submit(); 
+        document.getElementById('search-form').submit();
     }
 </script>
 @endsection

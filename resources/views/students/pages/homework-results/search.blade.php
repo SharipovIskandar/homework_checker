@@ -5,7 +5,7 @@
                 <i class="fa fa-minus"></i>
             </a>
         </div>
-        <h4 class="panel-title">Поиск</h4>
+        <h4 class="panel-title">Search</h4>
     </div>
     <div class="panel-body" id="search-div">
         <form method="get" action="{{ route('student.homework.results.index') }}" id="search-form">
@@ -26,18 +26,18 @@
                 </div>
 
                 <div class="col-md-1">
-                    <label>Поиск</label>
+                    <label>Search</label>
                     <br>
                     <button type="submit" class="btn btn-warning btn-sm">
-                        <i class="fa fa-filter fa-fw" style="font-size: 16px;"></i> Поиск
+                        <i class="fa fa-filter fa-fw" style="font-size: 16px;"></i> Search
                     </button>
                 </div>
 
                 <div class="col-md-1">
-                    <label>Очистить</label>
+                    <label>Clear</label>
                     <br>
                     <button type="submit" class="btn btn-secondary btn-sm" onclick="clearAllInputs()">
-                        <i class="glyphicon glyphicon-trash" style="font-size: 12px; display: inline-block; width: 16px; text-align: center;"></i> Очистить
+                        <i class="glyphicon glyphicon-trash" style="font-size: 12px; display: inline-block; width: 16px; text-align: center;"></i> Clear
                     </button>
                 </div>
             </div>

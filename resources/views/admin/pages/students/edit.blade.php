@@ -2,5 +2,5 @@
 'model' => $model,
 'route' => route('admin.students.update', $model),
 'method' => 'PUT',
-'label' => 'Изменить',
+'label' => 'Edit',
 ])

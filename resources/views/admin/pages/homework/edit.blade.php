@@ -4,5 +4,5 @@
 'model' => $model,
 'route' => route('admin.homework.update', $model),
 'method' => 'PUT',
-'label' => 'Изменить',
+'label' => 'Edit',
 ])

@@ -3,10 +3,10 @@
     <!-- begin breadcrumb -->
     <ol class="breadcrumb pull-left">
         <li>
-            <a href="{{ route('admin.students.index') }}">Статистика</a>
+            <a href="{{ route('student.homeworks.index') }}">Home</a>
         </li>
         <li>
-            <a href="{{ route('admin.homework-types.index') }}"> Клиент</a>
+            <a href="{{ route('admin.homework-types.index') }}"> Homework types</a>
         </li>
         <li class="active">{{ $label }}</li>
     </ol>

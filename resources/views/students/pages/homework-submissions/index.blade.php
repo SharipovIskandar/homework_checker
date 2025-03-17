@@ -10,11 +10,11 @@
     <ol class="breadcrumb pull-left">
         <li>
             <a href="{{route('student.homeworks.index')}}">
-                Главная
+                Home
             </a>
         </li>
         <li class="active">
-            Отчет о программистах
+            Homework submission
         </li>
     </ol>
     <br>
@@ -32,7 +32,7 @@
                 <div class="panel-heading">
                     <div class="panel-heading-btn">
                     </div>
-                    <h4 class="panel-title">Отчет о программистах</h4>
+                    <h4 class="panel-title">Homework submission</h4>
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive kv-grid-container">
