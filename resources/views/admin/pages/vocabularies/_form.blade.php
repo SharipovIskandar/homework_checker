@@ -139,7 +139,7 @@
                     };
                     reader.readAsDataURL(file);
 
-                    fetch('/admin/vocabulary/process-image', {
+                    fetch('{{ route("api.vocabulary.process-image") }}', {
                         method: 'POST',
                         body: formData,
                         headers: {

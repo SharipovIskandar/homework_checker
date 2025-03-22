@@ -35,7 +35,7 @@ Route::middleware('auth')->group(function () {
 
     Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], function () {
 
-        Route::post('/vocabulary/process-image', [ImageController::class, 'processImage']);
+
 
         Route::group(['prefix' => 'vocabularies', 'as' => 'vocabularies.'], function () {
             Route::get('/', [AdminVocabularyController::class, 'index'])->name('index');
