@@ -58,9 +58,9 @@ class ImageController extends Controller
         $data = json_decode($response->getBody(), true);
         $text = $data['candidates'];
 
+        // Clean up the translation
         $text = preg_replace('/^\* /m', '', $text);
 
         return $text;
     }
 }
-
