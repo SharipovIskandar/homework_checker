@@ -79,6 +79,7 @@
 
             <div id="word-data" style="display:none;">{{ json_encode($model->word) }}</div>
 
+
             <div id="result-route" style="display:none;">
                 {{ route('student.vocabularies.storeResult', $model) }}
             </div>
