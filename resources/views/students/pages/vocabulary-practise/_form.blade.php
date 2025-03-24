@@ -74,6 +74,7 @@
             <div class="btn-container">
                 <button id="startTest" class="btn btn-success">Start</button>
                 <button id="stopTest" class="btn btn-danger" disabled>Stop</button>
+                <button id="skipWord">Skip</button>
             </div>
 
             <div id="word-data" style="display:none;">{{ json_encode($model->word) }}</div>

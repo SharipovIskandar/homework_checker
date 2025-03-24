@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     let video = document.getElementById("video");
     let startBtn = document.getElementById("startTest");
     let stopBtn = document.getElementById("stopTest");
+    let skipBtn = document.getElementById("skipWord");  // O'tqazib yuborish tugmasi
     let wordBox = document.getElementById("word-box");
     let statusBox = document.getElementById("status-box");
     let heardWordBox = document.getElementById("heard-word");
@@ -13,7 +14,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     let audioContext, analyserNode, dataArray, canvas, canvasCtx;
 
-    if (!video || !startBtn || !stopBtn || !wordBox || !statusBox || !heardWordBox || !wordDataElement || !resultRouteElement || !faceStatusBox || !liveSpeechBox) {
+    if (!video || !startBtn || !stopBtn || !wordBox || !statusBox || !heardWordBox || !wordDataElement || !resultRouteElement || !faceStatusBox || !liveSpeechBox || !skipBtn) {
         return;
     }
 
@@ -88,7 +89,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             let correctWord = words[index].en.toLowerCase();
             heardWordBox.innerHTML = `Siz aytdingiz: <b>"${transcript}"</b>`;
 
-            if (transcript === correctWord) {
+            if (transcript.includes(correctWord)) {
                 statusBox.innerHTML = `✅ To‘g‘ri!`;
                 correctCount++;
                 answeredWords.add(correctWord); // Mark the word as answered
@@ -100,8 +101,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             }
         };
 
-        recognition.onerror = function () {
-            statusBox.innerHTML = "❌ Xatolik yuz berdi!";
+        recognition.onerror = function (event) {
+            statusBox.innerHTML = `❌ Xatolik yuz berdi: ${event.error || event.message}`;
         };
 
         recognition.start();
@@ -110,8 +111,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     function nextWord() {
         index++;
         if (index < words.length) {
-            // Skip words that have already been answered
-            while (answeredWords.has(words[index].en.toLowerCase())) {
+            // Skip words that have already been answered or skipped
+            while (answeredWords.has(words[index].en.toLowerCase()) || resultsLog.some(result => result.word === words[index].en && result.heard === "o'tqazildi")) {
                 index++;
             }
 
@@ -179,24 +180,32 @@ document.addEventListener("DOMContentLoaded", async function () {
             return;
         }
 
+        let faceNotDetectedTime = 0; // Yuz aniqlanmagan vaqtni saqlash
+
         faceTrackingInterval = setInterval(async () => {
             let detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions());
+
             if (detections.length === 0) {
                 faceStatusBox.innerHTML = "⚠️ Yuz ekrandan yo‘qoldi!";
-                setTimeout(() => {
+                faceNotDetectedTime += 1; // Yuz aniqlanmagan vaqtni oshir
+
+                if (faceNotDetectedTime >= 5) { // 5 soniya davomida aniqlanmasa
                     alert("Yuzingiz ekrandan yo‘qoldi! Test boshidan boshlanadi.");
                     clearInterval(faceTrackingInterval);
-                    location.reload();
-                }, 3000);
+                    location.reload(); // Testni boshidan boshlash
+                }
             } else {
                 faceStatusBox.innerHTML = "✅ Yuz aniqlandi!";
+                faceNotDetectedTime = 0; // Yuz aniqlanganda vaqtni qayta tiklash
             }
-        }, 1000);
+        }, 1000); // Har 1 soniyada tekshirish
     }
 
+    // startTest tugmasini bosganda
     startBtn.addEventListener("click", async function () {
         if (isRunning) return;
         isRunning = true;
+        skipBtn.disabled = false; // O'tqazib yuborish tugmasini faollashtirish
         await startCamera();
         startSpeechRecognition();
         wordBox.innerHTML = `<b>${words[index].uz}</b>`;
@@ -209,11 +218,20 @@ document.addEventListener("DOMContentLoaded", async function () {
         await trackFace();
     });
 
+    // stopTest tugmasini bosganda
     stopBtn.addEventListener("click", function () {
         saveTestResult();
         stopTest();
     });
 
+    // O'tqazib yuborish tugmasini bosganda
+    skipBtn.addEventListener("click", function () {
+        statusBox.innerHTML = `❌ So'zni o'tqazib yubordingiz!`;
+        resultsLog.push({ word: words[index].en, heard: "o'tqazildi", correct: false });
+        nextWord();
+    });
+
+    // Testni to'xtatish
     function stopTest() {
         let tracks = video.srcObject?.getTracks();
         if (tracks) tracks.forEach(track => track.stop());
@@ -223,6 +241,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         liveSpeechBox.innerHTML = "";
         startBtn.disabled = false;
         stopBtn.disabled = true;
+        skipBtn.disabled = true; // O'tqazib yuborish tugmasini o'chirish
         document.removeEventListener("visibilitychange", handleVisibilityChange);
         isRunning = false;
 
