@@ -44,7 +44,7 @@
                             <div class="col-md-12" style="margin-bottom: 10px;">
                                 <label class="control-label">Слово (Word)</label>
                                 <textarea name="word[]" id="wordTextarea" class="form-control" rows="3">
-                                    {{ old('word') ?? ($model->word[0] ?? '') }}
+                                    {{ old('word') ? implode(', ', old('word')) : ($model->word ? implode(', ', $model->word) : '') }}
                                 </textarea>
                                 <br>
                                 <img id="imagePreview" src="" style="max-width: 100%; display: none;"
