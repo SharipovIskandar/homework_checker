@@ -102,6 +102,24 @@
                                 @enderror
                             </div>
 
+                            <div class="col-md-6" style="margin-bottom: 10px;">
+                                <label class="control-label">Tip (Maslahat)</label>
+                                <textarea name="tip" class="form-control" rows="4" placeholder='Masalan: {"uz":"Yaxshi o‘ylab ko‘ring", "en":"Think carefully"}'>{{ old('tip') ?? $model->tip }}</textarea>
+                                @error('tip')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+
+                            <div class="col-md-6" style="margin-bottom: 10px;">
+                                <label class="control-label">Answer Template (enter one per line)</label>
+                                <textarea name="answer_template" class="form-control" rows="5">{{ old('answer_template') ?? (is_array($model->answer_template) ? implode("\n", $model->answer_template) : '') }}</textarea>
+                                @error('answer_template')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+
                             <div class="col-md-12" style="margin-bottom: 10px;">
                                 <label class="control-label">Upload Image</label>
                                 <input type="file" name="image" class="form-control" id="imageUpload" accept="image/*">

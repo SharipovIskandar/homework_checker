@@ -47,6 +47,8 @@ class AdminHomeworkQuestionsController extends Controller
                 'homework_id' => 'required|exists:homeworks,id',
                 'questions' => 'required|string',
                 'correct_answers' => 'required|string',
+                'tip' => 'nullable|string',
+                'answer_template' => 'nullable|string',
             ]);
 
             $questionsArray = explode("\n", trim($request->questions));
@@ -65,10 +67,23 @@ class AdminHomeworkQuestionsController extends Controller
                 $formattedAnswers[$taskKey] = trim($answer);
             }
 
+            $tip = $request->tip ? $request->tip : null;
+            $answerTemplate = $request->answer_template ? $request->answer_template : null;
+
+            if ($request->tip && $tip === null) {
+                return redirect()->back()->with('error', 'Tip noto‘g‘ri JSON formatda.');
+            }
+
+            if ($request->answer_template && $answerTemplate === null) {
+                return redirect()->back()->with('error', 'Answer Template noto‘g‘ri JSON formatda.');
+            }
+
             HomeworkQuestion::create([
                 'homework_id' => $request->homework_id,
                 'questions' => $formattedQuestions,
                 'correct_answers' => $formattedAnswers,
+                'tip' => $tip,
+                'answer_template' => $answerTemplate,
             ]);
 
             return redirect()->back()->with('success', 'Homework questions saved successfully!');
@@ -199,5 +214,4 @@ class AdminHomeworkQuestionsController extends Controller
 
         return response()->json(['correct_answers' => trim($answer)]);
     }
-
 }

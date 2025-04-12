@@ -10,11 +10,13 @@ class HomeworkQuestion extends Model
 {
     use HasFactory, Scopes;
 
-    protected $fillable = ['homework_id', 'questions', 'correct_answers'];
+    protected $fillable = ['homework_id', 'questions', 'correct_answers', 'answer_template', 'tip'];
 
     protected $casts = [
         'questions' => 'array',
         'correct_answers' => 'array',
+        'answer_template' => 'array',
+        'tip'=> 'array',
     ];
 
 
