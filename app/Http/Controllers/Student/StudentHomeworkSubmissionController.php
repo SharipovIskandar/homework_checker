@@ -22,7 +22,7 @@ class StudentHomeworkSubmissionController extends Controller
     {
 
         $datas = $this->modelClass::query()
-        ->where("student_id", Auth::user()->id)
+            ->where("student_id", Auth::user()->id)
             ->when(request('due_date') === 'future', function ($query) {
                 $query->whereHas('homework', function ($homeworkQuery) {
                     $homeworkQuery->where('due_date', '>', now());
@@ -43,7 +43,11 @@ class StudentHomeworkSubmissionController extends Controller
             ->whereHas('homework', function ($query) {
                 $query->where('due_date', '>', now());
             })
-            ->whereDoesntHave('homework.homeworkSubmission')
+            ->whereHas('homework', function ($query) {
+                $query->whereDoesntHave('homeworkSubmission', function ($q) {
+                    $q->where('student_id', auth()->id());
+                });
+            })
             ->get();
 
         if ($questions->isEmpty()) {
@@ -138,7 +142,6 @@ class StudentHomeworkSubmissionController extends Controller
         $model->save();
 
         return redirect()->back()->with('success', 'Updated successfully');
-
     }
 
     protected function updateSubmission(HomeworkSubmission $submission, $homeworkQuestions)
@@ -159,6 +162,4 @@ class StudentHomeworkSubmissionController extends Controller
             'answers' => $existingAnswers
         ]);
     }
-
-
 }

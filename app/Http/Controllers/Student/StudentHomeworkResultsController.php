@@ -16,6 +16,7 @@ class StudentHomeworkResultsController extends Controller
 
         $datas = $this->modelClass::query()
             ->with('homework')
+            ->where('student_id' , auth()->user()->id)
             ->when(request('due_date') === 'future', function ($query) {
                 $query->whereHas('homework', function ($homeworkQuery) {
                     $homeworkQuery->where('due_date', '>', now());
