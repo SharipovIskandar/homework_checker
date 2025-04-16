@@ -23,20 +23,20 @@
             <li class="{{ request()->routeIs('student.homeworks*') ? 'active' : '' }}">
                 <a href="{{ route('student.homeworks.index') }}">
                     <i class="glyphicon glyphicon-th-list"></i>
-                    <span>Students homework</span>
+                    <span>Homework</span>
                 </a>
             </li>
             <li class="{{ request()->routeIs('student.homework.submissions.*') ? 'active' : '' }}">
                 <a href="{{ route('student.homework.submissions.index') }}">
                     <i class="glyphicon glyphicon-inbox"></i>
-                    <span>Students homework submissions</span>
+                    <span>Homework submissions</span>
                 </a>
             </li>
 
             <li class="{{ request()->routeIs('student.homework.results.index') ? 'active' : '' }}">
                 <a href="{{ route('student.homework.results.index') }}">
                     <i class="glyphicon glyphicon-blackboard"></i>
-                    <span>Students homework results</span>
+                    <span>Homework results</span>
                 </a>
             </li>
             <li class="{{ request()->routeIs('student.vocabularies.*') ? 'active' : '' }}">
