@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminHomeworkController;
 use App\Http\Controllers\Admin\AdminHomeworkQuestionsController;
 use App\Http\Controllers\Admin\AdminHomeworkTypeController;
 use App\Http\Controllers\Admin\AdminStudentController;
+use App\Http\Controllers\Admin\AdminStudentsHomeworkResults;
 use App\Http\Controllers\Admin\AdminVocabularyController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ProfileController;
@@ -35,7 +36,9 @@ Route::middleware('auth')->group(function () {
 
     Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], function () {
 
-
+        Route::group(['prefix'=> 'students-results', 'as' => 'students-results.'], function () {
+            Route::get('', [AdminStudentsHomeworkResults::class, 'index'])->name('index');
+        });
 
         Route::group(['prefix' => 'vocabularies', 'as' => 'vocabularies.'], function () {
             Route::get('/', [AdminVocabularyController::class, 'index'])->name('index');
