@@ -15,7 +15,6 @@
             </tr>
         @else
             @foreach ($datas as $data)
-                {{-- @dd($data) --}}
                 <tr id="tr_{{ $data->id }}">
                     <td>{{ $datas->perPage() * ($datas->currentPage() - 1) + $loop->iteration }}</td>
                     <td>{{ $data->student->username ?? 'Unknown' }}</td>

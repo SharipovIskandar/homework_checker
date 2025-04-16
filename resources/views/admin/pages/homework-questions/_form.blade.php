@@ -44,7 +44,6 @@
         .prediction-box div:hover {
             background: #f0f0f0;
         }
-
     </style>
 @endsection
 @section('content')
@@ -52,12 +51,12 @@
 
     <div class="panel panel-inverse">
         <div class="panel-heading">
-            <h4 class="panel-title">{{$label}}</h4>
+            <h4 class="panel-title">{{ $label }}</h4>
         </div>
         <div class="panel-body">
             <div class="table-responsive kv-grid-container">
                 <form method="post" action="{{ $route }}" enctype="multipart/form-data">
-                    @if($method == "PUT")
+                    @if ($method == 'PUT')
                         @method($method)
                     @endif
                     @csrf
@@ -65,28 +64,27 @@
                         <div class="row">
                             <div class="col-md-12" style="margin-bottom: 10px;">
                                 <label>Homework Conditions</label>
-                                <select class="form-control" name="homework_id" id="year-select"
-                                        onchange="">
+                                <select class="form-control" name="homework_id" id="year-select" onchange="">
                                     <option value="">Homework</option>
-                                    @foreach($homeworks as $homework)
-                                        <option value="{{ $homework['id'] }}"
-                                            {{ (old('task_condition') ?? request('task_condition')) == $homework['id'] ? 'selected' : '' }}>
-                                            {{ $homework['task_condition'] }}
-                                        </option>
+                                    @foreach ($homeworks as $homework)
+                                        @if ($homework->due_date >= formatDateTime(now()))
+                                            <option value="{{ $homework['id'] }}"
+                                                {{ (old('task_condition') ?? request('task_condition')) == $homework['id'] ? 'selected' : '' }}>
+                                                {{ $homework['exercise_id'] . ' | ' . $homework['task_condition'] }}
+                                            </option>
+                                        @endif
                                     @endforeach
-
                                 </select>
                                 @error('homework_id')
-                                <div class="text-danger">{{ $message }}</div>
+                                    <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="col-md-6" style="margin-bottom: 10px;">
                                 <label class="control-label">Questions</label>
-                                <textarea id="questionsTextarea" name="questions"
-                                          class="form-control">{{ old('questions') ?? $model->questions }}</textarea>
+                                <textarea id="questionsTextarea" name="questions" class="form-control">{{ old('questions') ?? $model->questions }}</textarea>
                                 @error('questions')
-                                <div class="text-danger">{{ $message }}</div>
+                                    <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
 
@@ -94,19 +92,21 @@
                                 <label class="control-label">Correct Answers</label>
                                 <textarea id="correctAnswersTextarea" name="correct_answers" class="form-control">{{ old('correct_answers') ?? $model->correct_answers }}</textarea>
                                 <div id="predictions" class="prediction-box"></div>
-                                <button type="button" id="generateCorrectAnswers" class="btn btn-primary" style="margin-top:10px;">
+                                <button type="button" id="generateCorrectAnswers" class="btn btn-primary"
+                                    style="margin-top:10px;">
                                     Generate Correct Answers
                                 </button>
                                 @error('correct_answers')
-                                <div class="text-danger">{{ $message }}</div>
+                                    <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="col-md-6" style="margin-bottom: 10px;">
                                 <label class="control-label">Tip (Maslahat)</label>
-                                <textarea name="tip" class="form-control" rows="4" placeholder='Masalan: {"uz":"Yaxshi o‘ylab ko‘ring", "en":"Think carefully"}'>{{ old('tip') ?? $model->tip }}</textarea>
+                                <textarea name="tip" class="form-control" rows="4"
+                                    placeholder='Masalan: {"uz":"Yaxshi o‘ylab ko‘ring", "en":"Think carefully"}'>{{ old('tip') ?? $model->tip }}</textarea>
                                 @error('tip')
-                                <div class="text-danger">{{ $message }}</div>
+                                    <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
 
@@ -123,14 +123,16 @@
                             <div class="col-md-12" style="margin-bottom: 10px;">
                                 <label class="control-label">Upload Image</label>
                                 <input type="file" name="image" class="form-control" id="imageUpload" accept="image/*">
-                                <img id="pastedImagePreview" src="" alt="Pasted Image" style="max-width: 100%; margin-top: 10px; display: none;">
-                                <button id="applyImageText" class="btn btn-primary" style="margin-top: 10px; display: none;">Apply</button>
+                                <img id="pastedImagePreview" src="" alt="Pasted Image"
+                                    style="max-width: 100%; margin-top: 10px; display: none;">
+                                <button id="applyImageText" class="btn btn-primary"
+                                    style="margin-top: 10px; display: none;">Apply</button>
                             </div>
 
                         </div>
                         <br>
                         <div class="form_footer">
-                            <a href="{{route('admin.homework-questions.index')}}" class="btn btn-warning">Назад</a>
+                            <a href="{{ route('admin.homework-questions.index') }}" class="btn btn-warning">Назад</a>
 
                             <button type="submit" class="btn btn-primary">Сохранить</button>
                         </div>
@@ -139,14 +141,12 @@
             </div>
         </div>
     </div>
-
 @endsection
 
 @section('customJs')
-
     <script src="{{ asset('summernote/summernote.js') }}"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             var phoneInput = document.getElementById('phonecreate');
 
             var phoneMaskOptions = {
@@ -162,7 +162,7 @@
         // phone maska
         $("#masked-input-phone").mask("+998 77 777 77 77")
 
-        $(document).ready(function () {
+        $(document).ready(function() {
             $('#banner_textuz').summernote({
                 placeholder: 'Адрес',
                 tabsize: 2,
@@ -170,14 +170,14 @@
             });
         });
 
-        $(document).ready(function () {
+        $(document).ready(function() {
             $('#banner_texten').summernote({
                 placeholder: 'Адрес',
                 tabsize: 2,
                 height: 226,
             });
         });
-        $(document).ready(function () {
+        $(document).ready(function() {
             $('#banner_textru').summernote({
                 placeholder: 'Адрес',
                 tabsize: 2,
@@ -185,15 +185,15 @@
             });
         });
 
-        var loadFile = function (event, output = 'output_create') {
+        var loadFile = function(event, output = 'output_create') {
             var output = document.getElementById(output);
             output.src = URL.createObjectURL(event.target.files[0]);
-            output.onload = function () {
+            output.onload = function() {
                 URL.revokeObjectURL(output.src)
             }
         };
 
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             let input = document.querySelector("textarea[name='correct_answers']");
             let predictionBox = document.getElementById("predictions");
 
@@ -213,7 +213,7 @@
                 "they are": "they're"
             };
 
-            input.addEventListener("input", function () {
+            input.addEventListener("input", function() {
                 let text = input.value;
                 let sentences = text.split(/[.!?]/);
                 let lastSentence = sentences[sentences.length - 1].trim();
@@ -240,7 +240,7 @@
                 modifiedSentences.forEach(shortened => {
                     let div = document.createElement("div");
                     div.textContent = shortened;
-                    div.addEventListener("click", function () {
+                    div.addEventListener("click", function() {
                         applyPrediction(shortened);
                     });
                     predictionBox.appendChild(div);
@@ -272,7 +272,7 @@
             }
         });
 
-        document.getElementById('imageUpload').addEventListener('change', function (event) {
+        document.getElementById('imageUpload').addEventListener('change', function(event) {
             uploadImage(event.target.files[0]);
         });
 
@@ -317,12 +317,12 @@
             formData.append('image', file);
 
             fetch('/admin/homework-questions/process-image', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                }
-            })
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
@@ -351,16 +351,16 @@
             let url = "/admin/homework-questions/generate-correct-answers";
 
             fetch(url, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": csrfToken
-                },
-                body: JSON.stringify({
-                    homework_id: homeworkCondition,
-                    questions: questions
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": csrfToken
+                    },
+                    body: JSON.stringify({
+                        homework_id: homeworkCondition,
+                        questions: questions
+                    })
                 })
-            })
                 .then(response => {
                     if (!response.ok) {
                         throw new Error("Server xatosi!");
@@ -372,8 +372,5 @@
                 })
                 .catch(error => console.error("Error:", error));
         });
-
-
     </script>
-
 @endsection
