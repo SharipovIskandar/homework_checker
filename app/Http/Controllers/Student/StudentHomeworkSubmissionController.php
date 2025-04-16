@@ -40,6 +40,7 @@ class StudentHomeworkSubmissionController extends Controller
     {
         $questions = HomeworkQuestion::query()
             ->with(['homework.homeworkTypes'])
+            ->whereEqual('homework_id')
             ->whereHas('homework', function ($query) {
                 $query->where('due_date', '>', now());
             })
