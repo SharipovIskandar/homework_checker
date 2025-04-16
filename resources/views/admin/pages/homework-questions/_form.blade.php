@@ -312,9 +312,25 @@
             uploadImage(fileInput.files[0]);
         });
 
+        function getLastQuestionNumber(text) {
+            let lines = text.trim().split("\n").reverse();
+            for (let line of lines) {
+                let match = line.match(/^(\d+)[\.\)\-]/);
+                if (match) {
+                    return parseInt(match[1]);
+                }
+            }
+            return 0;
+        }
+
         function uploadImage(file) {
+            let questionsTextarea = document.getElementById("questionsTextarea");
+            let currentText = questionsTextarea.value;
+            let lastNumber = getLastQuestionNumber(currentText);
+
             let formData = new FormData();
             formData.append('image', file);
+            formData.append('last_number', lastNumber);
 
             fetch('/admin/homework-questions/process-image', {
                     method: 'POST',
@@ -326,8 +342,6 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        let questionsTextarea = document.getElementById("questionsTextarea");
-                        let currentText = questionsTextarea.value;
                         questionsTextarea.value = currentText ? currentText + "\n" + data.text : data.text;
                     } else {
                         alert('Error processing image');
@@ -335,6 +349,7 @@
                 })
                 .catch(error => console.error('Error:', error));
         }
+
 
         document.getElementById('generateCorrectAnswers').addEventListener('click', function(event) {
             event.preventDefault();

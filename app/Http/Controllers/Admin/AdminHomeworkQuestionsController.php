@@ -127,8 +127,10 @@ class AdminHomeworkQuestionsController extends Controller
     public function processImage(Request $request)
     {
         $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:10480',
         ]);
+
+        $lastNumber = (int) $request->input('last_number', 0);
 
         $image = $request->file('image');
         $tempPath = $image->getRealPath();
@@ -138,7 +140,7 @@ class AdminHomeworkQuestionsController extends Controller
 
         $lines = explode("\n", $text);
         $formattedText = [];
-        $counter = 1;
+        $counter = $lastNumber + 1;
 
         foreach ($lines as $line) {
             $line = trim($line);
@@ -161,7 +163,6 @@ class AdminHomeworkQuestionsController extends Controller
             $line = "{$counter}. " . ucfirst($line);
             $counter++;
 
-            // Oxirida nuqta yo‘q bo‘lsa, qo‘shamiz
             if (!preg_match('/[.?]$/', $line)) {
                 $line .= '.';
             }
@@ -174,6 +175,7 @@ class AdminHomeworkQuestionsController extends Controller
             'text' => implode("\n", $formattedText)
         ]);
     }
+
 
 
     public function generateCorrectAnswers(Request $request)
