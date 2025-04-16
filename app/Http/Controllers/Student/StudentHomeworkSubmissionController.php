@@ -51,9 +51,6 @@ class StudentHomeworkSubmissionController extends Controller
             })
             ->get();
 
-        if ($questions->isEmpty()) {
-            abort(404, "Homework topilmadi yoki muddati o'tib ketgan.");
-        }
 
         $users = User::all();
 
