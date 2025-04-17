@@ -79,31 +79,247 @@ class HomeworkSubmissionObserver
     private function compareAnswers($userAnswer, $correctAnswer)
     {
         try {
-            $userAnswer = $this->normalizeText($userAnswer);
-            $correctAnswer = $this->normalizeText($correctAnswer);
-
-            if (empty($correctAnswer)) {
-                Log::warning("Bo'sh correctAnswer taqqoslanmoqda.");
+            // Bo'sh javoblarni tekshirish
+            if (empty($userAnswer) || empty($correctAnswer)) {
+                Log::warning("Bo'sh javob taqqoslanmoqda", [
+                    'userAnswer' => $userAnswer,
+                    'correctAnswer' => $correctAnswer
+                ]);
                 return false;
             }
 
-            $correctVariants = explode(" or ", $correctAnswer);
+            // Javoblarni normalizatsiya qilish
+            $userAnswer = $this->normalizeText($userAnswer);
+            $correctAnswer = $this->normalizeText($correctAnswer);
 
+            // Variantlarni ajratish
+            $correctVariants = array_map('trim', explode(" or ", $correctAnswer));
+            
             foreach ($correctVariants as $variant) {
-                $variant = trim($variant);
                 // Tartib raqamlarini olib tashlash
                 $variantWithoutNumbers = $this->removeNumbers($variant);
                 
-                // Ikkala variantni ham tekshirish
+                // Variantni normalizatsiya qilish
+                $variant = $this->normalizeText($variant);
+                $variantWithoutNumbers = $this->normalizeText($variantWithoutNumbers);
+
+                // Foydalanuvchi javobidan tartib raqamini olib tashlash
+                $userAnswerWithoutNumbers = $this->removeNumbers($userAnswer);
+                $userAnswerWithoutNumbers = $this->normalizeText($userAnswerWithoutNumbers);
+
+                // To'g'ridan-to'g'ri taqqoslash
+                if ($this->isExactMatch($userAnswer, $variant) || 
+                    $this->isExactMatch($userAnswer, $variantWithoutNumbers) ||
+                    $this->isExactMatch($userAnswerWithoutNumbers, $variant) ||
+                    $this->isExactMatch($userAnswerWithoutNumbers, $variantWithoutNumbers)) {
+                    return true;
+                }
+
+                // Levenshtein masofasi orqali taqqoslash
                 if ($this->isSimilar($userAnswer, $variant) || 
-                    ($variantWithoutNumbers !== $variant && $this->isSimilar($userAnswer, $variantWithoutNumbers))) {
+                    $this->isSimilar($userAnswer, $variantWithoutNumbers) ||
+                    $this->isSimilar($userAnswerWithoutNumbers, $variant) ||
+                    $this->isSimilar($userAnswerWithoutNumbers, $variantWithoutNumbers)) {
+                    return true;
+                }
+
+                // Qisqartmalarni hisobga olish
+                if ($this->checkAbbreviations($userAnswer, $variant) || 
+                    $this->checkAbbreviations($userAnswer, $variantWithoutNumbers) ||
+                    $this->checkAbbreviations($userAnswerWithoutNumbers, $variant) ||
+                    $this->checkAbbreviations($userAnswerWithoutNumbers, $variantWithoutNumbers)) {
                     return true;
                 }
             }
 
             return false;
         } catch (\Exception $e) {
-            Log::error("compareAnswers metodida xatolik: " . $e->getMessage());
+            Log::error("compareAnswers metodida xatolik: " . $e->getMessage(), [
+                'userAnswer' => $userAnswer ?? null,
+                'correctAnswer' => $correctAnswer ?? null,
+                'trace' => $e->getTraceAsString()
+            ]);
+            return false;
+        }
+    }
+
+    private function isExactMatch($str1, $str2)
+    {
+        return strtolower(trim($str1)) === strtolower(trim($str2));
+    }
+
+    private function checkAbbreviations($userAnswer, $correctAnswer)
+    {
+        $abbreviations = [
+            "is not" => ["isn't", "isnt"],
+            "are not" => ["aren't", "arent"],
+            "do not" => ["don't", "dont"],
+            "does not" => ["doesn't", "doesnt"],
+            "cannot" => ["can't", "cant"],
+            "will not" => ["won't", "wont"],
+            "would not" => ["wouldn't", "wouldnt"],
+            "should not" => ["shouldn't", "shouldnt"],
+            "he will" => ["he'll", "hell"],
+            "they will" => ["they'll", "theyll"],
+            "I am" => ["I'm", "Im"],
+            "you are" => ["you're", "youre"],
+            "they are" => ["they're", "theyre"],
+            "it is" => ["it's", "its"],
+            "that is" => ["that's", "thats"],
+            "what is" => ["what's", "whats"],
+            "who is" => ["who's", "whos"],
+            "where is" => ["where's", "wheres"],
+            "when is" => ["when's", "whens"],
+            "why is" => ["why's", "whys"],
+            "how is" => ["how's", "hows"],
+            "there is" => ["there's", "theres"],
+            "here is" => ["here's", "heres"],
+            "that is" => ["that's", "thats"],
+            "this is" => ["this's", "thiss"],
+            "what is" => ["what's", "whats"],
+            "who is" => ["who's", "whos"],
+            "where is" => ["where's", "wheres"],
+            "when is" => ["when's", "whens"],
+            "why is" => ["why's", "whys"],
+            "how is" => ["how's", "hows"]
+        ];
+
+        $userAnswer = strtolower(trim($userAnswer));
+        $correctAnswer = strtolower(trim($correctAnswer));
+
+        // Qisqartmalarni to'liq shaklga o'tkazish
+        foreach ($abbreviations as $full => $short) {
+            if (in_array($userAnswer, $short)) {
+                $userAnswer = $full;
+            }
+            if (in_array($correctAnswer, $short)) {
+                $correctAnswer = $full;
+            }
+        }
+
+        // Qisqartmalarni matn ichida ham tekshirish
+        foreach ($abbreviations as $full => $short) {
+            foreach ($short as $abbr) {
+                if (strpos($userAnswer, $abbr) !== false) {
+                    $userAnswer = str_replace($abbr, $full, $userAnswer);
+                }
+                if (strpos($correctAnswer, $abbr) !== false) {
+                    $correctAnswer = str_replace($abbr, $full, $correctAnswer);
+                }
+            }
+        }
+
+        return $userAnswer === $correctAnswer;
+    }
+
+    private function normalizeText($text)
+    {
+        try {
+            if (empty($text)) {
+                return '';
+            }
+
+            // Barcha belgilarni tozalash
+            $text = preg_replace('/[^\p{L}\p{N}\s\'\.,]/u', '', $text);
+            
+            // Qo'shimcha bo'shliqlarni olib tashlash
+            $text = preg_replace('/\s+/', ' ', $text);
+            
+            // Katta-kichik harflarni birlashtirish
+            $text = strtolower(trim($text));
+
+            // Qisqartmalarni normalizatsiya qilish
+            $text = $this->normalizeAbbreviations($text);
+
+            // Nuqta va vergullarni tozalash
+            $text = str_replace(['.', ','], '', $text);
+
+            return $text;
+        } catch (\Exception $e) {
+            Log::error("normalizeText metodida xatolik: " . $e->getMessage(), [
+                'text' => $text,
+                'trace' => $e->getTraceAsString()
+            ]);
+            return '';
+        }
+    }
+
+    private function normalizeAbbreviations($text)
+    {
+        $abbreviations = [
+            "is not" => ["isn't", "isnt"],
+            "are not" => ["aren't", "arent"],
+            "do not" => ["don't", "dont"],
+            "does not" => ["doesn't", "doesnt"],
+            "cannot" => ["can't", "cant"],
+            "will not" => ["won't", "wont"],
+            "would not" => ["wouldn't", "wouldnt"],
+            "should not" => ["shouldn't", "shouldnt"],
+            "he will" => ["he'll", "hell"],
+            "they will" => ["they'll", "theyll"],
+            "I am" => ["I'm", "Im"],
+            "you are" => ["you're", "youre"],
+            "they are" => ["they're", "theyre"],
+            "it is" => ["it's", "its"],
+            "that is" => ["that's", "thats"],
+            "what is" => ["what's", "whats"],
+            "who is" => ["who's", "whos"],
+            "where is" => ["where's", "wheres"],
+            "when is" => ["when's", "whens"],
+            "why is" => ["why's", "whys"],
+            "how is" => ["how's", "hows"]
+        ];
+
+        foreach ($abbreviations as $full => $short) {
+            if (in_array($text, $short)) {
+                return $full;
+            }
+        }
+
+        return $text;
+    }
+
+    private function isSimilar($userAnswer, $correctAnswer)
+    {
+        try {
+            if (empty($userAnswer) || empty($correctAnswer)) {
+                return false;
+            }
+
+            // To'g'ridan-to'g'ri taqqoslash
+            if ($userAnswer === $correctAnswer) {
+                return true;
+            }
+
+            // Levenshtein masofasini hisoblash
+            $distance = levenshtein($userAnswer, $correctAnswer);
+            $maxLen = max(strlen($userAnswer), strlen($correctAnswer));
+
+            if ($maxLen === 0) {
+                return false;
+            }
+
+            // O'xshashlik foizini hisoblash
+            $similarity = (1 - ($distance / $maxLen)) * 100;
+
+            // Qisqa matnlar uchun qattiqroq talab
+            if ($maxLen < 5) {
+                return $similarity >= 90;
+            }
+
+            // O'rta uzunlikdagi matnlar uchun
+            if ($maxLen < 10) {
+                return $similarity >= 85;
+            }
+
+            // Uzun matnlar uchun
+            return $similarity >= 80;
+        } catch (\Exception $e) {
+            Log::error("isSimilar metodida xatolik: " . $e->getMessage(), [
+                'userAnswer' => $userAnswer,
+                'correctAnswer' => $correctAnswer,
+                'trace' => $e->getTraceAsString()
+            ]);
             return false;
         }
     }
@@ -118,72 +334,19 @@ class HomeworkSubmissionObserver
             $text = preg_replace('/^\d+[\.\)\-]\s*/', '', $text);
             // O'rtadagi raqamlarni olib tashlash
             $text = preg_replace('/\s+\d+[\.\)\-]\s*/', ' ', $text);
+            // Qavslar ichidagi raqamlarni olib tashlash
+            $text = preg_replace('/\(\d+\)/', '', $text);
+            // Qavslar ichidagi harflarni olib tashlash
+            $text = preg_replace('/\([a-zA-Z]\)/', '', $text);
             return trim($text);
         } catch (\Exception $e) {
-            Log::error("removeNumbers metodida xatolik: " . $e->getMessage());
+            Log::error("removeNumbers metodida xatolik: " . $e->getMessage(), [
+                'text' => $text,
+                'trace' => $e->getTraceAsString()
+            ]);
             return $text;
         }
     }
-
-    /**
-     * ✅ Bu funksiya javoblarni normalizatsiya qiladi:
-     * - "is not" -> "isn't"
-     * - "are not" -> "aren't"
-     * - "do not" -> "don't"
-     */
-    private function normalizeText($text)
-    {
-        try {
-            $replacements = [
-                "is not" => "isn't",
-                "are not" => "aren't",
-                "do not" => "don't",
-                "does not" => "doesn't",
-                "cannot" => "can't",
-                "will not" => "won't",
-                "would not" => "wouldn't",
-                "should not" => "shouldn't",
-                "he will" => "he'll",
-                "they will" => "they'll",
-                "I am" => "I'm",
-                "you are" => "you're",
-                "they are" => "they're"
-            ];
-
-            $text = strtolower(trim($text));
-            $text = str_replace(array_keys($replacements), array_values($replacements), $text);
-            $text = preg_replace('/[^a-z0-9\s\']/i', '', $text);
-            $text = preg_replace('/\s+/', ' ', $text);
-
-            return $text;
-        } catch (\Exception $e) {
-            Log::error("normalizeText metodida xatolik: " . $e->getMessage());
-            return '';
-        }
-    }
-
-    private function isSimilar($userAnswer, $correctAnswer)
-    {
-        try {
-            if ($userAnswer === $correctAnswer) {
-                return true;
-            }
-
-            $distance = levenshtein($userAnswer, $correctAnswer);
-            $maxLen = max(strlen($userAnswer), strlen($correctAnswer));
-
-            if ($maxLen === 0) {
-                return false;
-            }
-
-            $similarity = (1 - ($distance / $maxLen)) * 100;
-
-                return $similarity >= 85;
-        } catch (\Exception $e) {
-            return false;
-        }
-    }
-
 
     /**
      * Handle the HomeworkSubmission "deleted" event.

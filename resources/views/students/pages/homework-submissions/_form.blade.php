@@ -95,7 +95,6 @@
                                 @endforeach
                             @endforeach
                         </div>
-
                         <br>
                         <div class="form_footer">
                             <a href="{{ route('student.homeworks.index') }}" class="btn btn-warning">Назад</a>

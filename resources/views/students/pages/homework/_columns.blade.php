@@ -51,14 +51,14 @@
 
                         @if (
                             !isset($data->homework->homeworkSubmission) ||
-                                $data->homework->homeworkSubmission->filter(fn($submission) => $submission->homework_id == $data->id)->isEmpty())
+                                $data->homework->homeworkSubmission->filter(fn($submission) => $submission->homework_id == $data->id && $submission->student_id == auth()->user()->id)->isEmpty())
                             <a href="{{ route('student.homework.submissions.create', ['homework_id' => $data->id]) }}"
                                 title="Let's go! Do this shit" class="btn btn-xs btn-success">
                                 <span class="glyphicon glyphicon-new-window"></span>
                             </a>
                         @endif
 
-                    </td>
+                    </td>   
                 </tr>
             @endforeach
         @endif
