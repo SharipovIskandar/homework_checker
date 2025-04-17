@@ -61,6 +61,9 @@ class StudentVocabularyTestController extends Controller
             ->with(['message' => 'Test natijasi saqlandi']);
     }
 
-
+    public function commingSoon()
+    {
+        return view('students.pages.vocabulary-practise.comming-soon');
+    }
 
 }
