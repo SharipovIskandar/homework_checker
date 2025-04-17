@@ -206,11 +206,7 @@ class AdminHomeworkQuestionsController extends Controller
 
         $templatePrompt = "Generate the correct question format for the following question, one per line.
         \nQuestion: \"{$request->questions}\"
-        \nEach template should show exactly how to write the question, without any explanations.
-        \nFor example, if the question is '(is / at home / your mother)', the template should be:
-        \nIs your mother at home?
-        \nOr if the question is '(your parents / are / well)', the template should be:
-        \nAre your parents well?";
+        \n Just we need one of the correct answer.";
 
         $answerResponse = Http::withOptions([
             'Content-Type' => 'application/json',
