@@ -71,11 +71,11 @@ class AdminHomeworkQuestionsController extends Controller
             $answerTemplate = $request->answer_template ? $request->answer_template : null;
 
             if ($request->tip && $tip === null) {
-                return redirect()->back()->with('error', 'Tip noto‘g‘ri JSON formatda.');
+                return redirect()->back()->with('error', "Tip noto'g'ri JSON formatda.");
             }
 
             if ($request->answer_template && $answerTemplate === null) {
-                return redirect()->back()->with('error', 'Answer Template noto‘g‘ri JSON formatda.');
+                return redirect()->back()->with('error', "Answer Template noto'g'ri JSON formatda.");
             }
 
             HomeworkQuestion::create([
@@ -176,8 +176,6 @@ class AdminHomeworkQuestionsController extends Controller
         ]);
     }
 
-
-
     public function generateCorrectAnswers(Request $request)
     {
         $request->validate([
@@ -196,24 +194,62 @@ class AdminHomeworkQuestionsController extends Controller
         $apiKey = env('GEMINI_API_KEY');
         $url = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=$apiKey";
 
-        // AI ga toza va aniq so‘rov berish
-        $prompt = "Answer the following question strictly based on the given homework condition without any additional explanation.
-    \nHomework condition: \"$taskCondition\"
-    \nQuestion: \"{$request->questions}\"
-    \nProvide only the correct answer.";
+        $answerPrompt = "Answer the following question strictly based on the given homework condition without any additional explanation.
+        \nHomework condition: \"$taskCondition\"
+        \nQuestion: \"{$request->questions}\"
+        \nProvide only the correct answer.";
+        $tipPrompt = "Generate a very short and clear tip for the following question in both Uzbek and English languages. 
+        \nQuestion: \"{$request->questions}\"
+        \nFormat the response as a JSON object with 'uz' and 'en' keys.
+        \nEach tip should be maximum 2-3 words.
+        \nExample format: {\"uz\":\"Shaxsga moslash\", \"en\":\"Match the verb\"}";
 
-        $response = Http::withOptions([
+        $templatePrompt = "Generate the correct question format for the following question, one per line.
+        \nQuestion: \"{$request->questions}\"
+        \nEach template should show exactly how to write the question, without any explanations.
+        \nFor example, if the question is '(is / at home / your mother)', the template should be:
+        \nIs your mother at home?
+        \nOr if the question is '(your parents / are / well)', the template should be:
+        \nAre your parents well?";
+
+        $answerResponse = Http::withOptions([
             'Content-Type' => 'application/json',
             'verify' => false,
         ])->post($url, [
-            "contents" => [
-                ["parts" => [["text" => $prompt]]]
-            ]
+            "contents" => [["parts" => [["text" => $answerPrompt]]]]
+        ]);
+        $tipResponse = Http::withOptions([
+            'Content-Type' => 'application/json',
+            'verify' => false,
+        ])->post($url, [
+            "contents" => [["parts" => [["text" => $tipPrompt]]]]
         ]);
 
-        $data = $response->json();
-        $answer = $data['candidates'][0]['content']['parts'][0]['text'] ?? 'No answer generated.';
+        $templateResponse = Http::withOptions([
+            'Content-Type' => 'application/json',
+            'verify' => false,
+        ])->post($url, [
+            "contents" => [["parts" => [["text" => $templatePrompt]]]]
+        ]);
 
-        return response()->json(['correct_answers' => trim($answer)]);
+        $answerData = $answerResponse->json();
+        $tipData = $tipResponse->json();
+        $templateData = $templateResponse->json();
+
+        $answer = $answerData['candidates'][0]['content']['parts'][0]['text'] ?? 'No answer generated.';
+        $tipJson = $tipData['candidates'][0]['content']['parts'][0]['text'] ?? '{"uz":"", "en":""}';
+        $templates = $templateData['candidates'][0]['content']['parts'][0]['text'] ?? '';
+
+        $tip = json_decode($tipJson, true);
+        $uzTip = $tip['uz'] ?? '';
+
+        $templatesArray = array_filter(explode("\n", $templates));
+
+        $firstTemplate = $templatesArray[0] ?? '';
+        return response()->json([
+            'correct_answers' => trim($answer),
+            'tip' => $uzTip,
+            'answer_template' => $firstTemplate
+        ]);
     }
 }

@@ -26,7 +26,7 @@ class HomeworkSubmissionObserver
             $answers = is_array($submission->answers) ? $submission->answers : json_decode($submission->answers, true);
 
             if (!is_array($answers)) {
-                throw new \Exception("Answers JSON formatida emas yoki noto‘g‘ri.");
+                throw new \Exception("Answers JSON formatida emas yoki noto'g'ri.");
             }
 
             $homeworkQuestion = HomeworkQuestion::where('homework_id', $submission->homework_id)->first();
@@ -40,7 +40,7 @@ class HomeworkSubmissionObserver
                 : json_decode($homeworkQuestion->correct_answers, true);
 
             if (!is_array($correctAnswers)) {
-                throw new \Exception("Homework question correct_answers JSON formatida noto‘g‘ri.");
+                throw new \Exception("Homework question correct_answers JSON formatida noto'g'ri.");
             }
 
             $totalQuestions = count($correctAnswers);
@@ -90,7 +90,13 @@ class HomeworkSubmissionObserver
             $correctVariants = explode(" or ", $correctAnswer);
 
             foreach ($correctVariants as $variant) {
-                if ($this->isSimilar($userAnswer, trim($variant))) {
+                $variant = trim($variant);
+                // Tartib raqamlarini olib tashlash
+                $variantWithoutNumbers = $this->removeNumbers($variant);
+                
+                // Ikkala variantni ham tekshirish
+                if ($this->isSimilar($userAnswer, $variant) || 
+                    ($variantWithoutNumbers !== $variant && $this->isSimilar($userAnswer, $variantWithoutNumbers))) {
                     return true;
                 }
             }
@@ -99,6 +105,23 @@ class HomeworkSubmissionObserver
         } catch (\Exception $e) {
             Log::error("compareAnswers metodida xatolik: " . $e->getMessage());
             return false;
+        }
+    }
+
+    /**
+     * Tartib raqamlarini olib tashlaydigan metod
+     */
+    private function removeNumbers($text)
+    {
+        try {
+            // Boshidagi raqamlarni olib tashlash (1., 2., 3. kabi)
+            $text = preg_replace('/^\d+[\.\)\-]\s*/', '', $text);
+            // O'rtadagi raqamlarni olib tashlash
+            $text = preg_replace('/\s+\d+[\.\)\-]\s*/', ' ', $text);
+            return trim($text);
+        } catch (\Exception $e) {
+            Log::error("removeNumbers metodida xatolik: " . $e->getMessage());
+            return $text;
         }
     }
 
@@ -150,7 +173,6 @@ class HomeworkSubmissionObserver
             $maxLen = max(strlen($userAnswer), strlen($correctAnswer));
 
             if ($maxLen === 0) {
-                Log::warning("Bo'sh satrlarni taqqoslash urinishlari.");
                 return false;
             }
 
@@ -158,7 +180,6 @@ class HomeworkSubmissionObserver
 
                 return $similarity >= 85;
         } catch (\Exception $e) {
-            Log::error("isSimilar metodida xatolik: " . $e->getMessage());
             return false;
         }
     }

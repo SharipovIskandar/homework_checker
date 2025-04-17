@@ -10,33 +10,59 @@ class ImageController extends Controller
 {
     public function processImage(Request $request)
     {
-        $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        try {
+            $request->validate([
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
 
-        $image = $request->file('image');
-        $words = $this->extractTextFromImage($image);
-        $translatedWords = $this->translateWords($words);
+            $image = $request->file('image');
+            $words = $this->extractTextFromImage($image);
+            $translatedWords = $this->translateWords($words);
 
-        $totalVocabularies = count($words);
+            // Matnni formatlash
+            $formattedText = $this->formatText($translatedWords);
+            $totalVocabularies = count($words);
 
-        return response()->json([
-            'success' => true,
-            'text' => $translatedWords,
-            'total_vocabularies' => $totalVocabularies,
-        ]);
+            return response()->json([
+                'success' => true,
+                'text' => $formattedText,
+                'total_vocabularies' => $totalVocabularies,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Rasmni qayta ishlashda xatolik yuz berdi: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     private function extractTextFromImage($image)
     {
         $ocr = new TesseractOCR($image->getRealPath());
+        $ocr->lang('eng')           
+            ->psm(3)                
+            ->oem(3)                
+            ->config('tessedit_char_whitelist', 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,!?\'"()-_ '); 
+
         $text = $ocr->run();
 
-        $text = preg_replace('/\([^)]*\)/', '', $text);
-        $text = preg_replace('/[\/\\\[\]{}<>|]+/', ' ', $text);
-        $words = preg_split('/\s+/', trim($text));
+        // Matnni tozalash
+        $text = preg_replace('/[\/\\\[\]{}<>|]+/', ' ', $text); 
+        $text = preg_replace('/\s+/', ' ', $text);  
+        $text = trim($text); 
 
-        return array_filter($words);
+        // Matnni qatorlarga ajratish
+        $lines = explode("\n", $text);
+        $result = [];
+        
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if (!empty($line)) {
+                $result[] = $line;
+            }
+        }
+
+        return implode("\n", $result);
     }
 
     private function translateWords($words)
@@ -62,5 +88,27 @@ class ImageController extends Controller
         $text = preg_replace('/^\* /m', '', $text);
 
         return $text;
+    }
+
+    private function formatText($words)
+    {
+        $formattedText = '';
+        $currentLine = '';
+        $maxLineLength = 50; 
+
+        foreach ($words as $word) {
+            if (strlen($currentLine . ' ' . $word) <= $maxLineLength) {
+                $currentLine .= ($currentLine ? ' ' : '') . $word;
+            } else {
+                $formattedText .= ($formattedText ? "\n" : '') . $currentLine;
+                $currentLine = $word;
+            }
+        }
+
+        if ($currentLine) {
+            $formattedText .= ($formattedText ? "\n" : '') . $currentLine;
+        }
+
+        return $formattedText;
     }
 }

@@ -9,8 +9,8 @@ return new class extends Migration {
     {
         Schema::create('homework_questions', function (Blueprint $table) {
             $table->id();
-            $table->jsonb('tip');
-            $table->jsonb('answer_template');
+            $table->jsonb('tip')->nullable();
+            $table->jsonb('answer_template')->nullable();
             $table->foreignId('homework_id')->constrained('homeworks')->onDelete('cascade');
             $table->jsonb('questions')->nullable();
             $table->jsonb('correct_answers');

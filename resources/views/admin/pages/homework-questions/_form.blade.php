@@ -104,14 +104,14 @@
                             <div class="col-md-6" style="margin-bottom: 10px;">
                                 <label class="control-label">Tip (Maslahat)</label>
                                 <textarea name="tip" class="form-control" rows="4"
-                                    placeholder='Masalan: {"uz":"Yaxshi o‘ylab ko‘ring", "en":"Think carefully"}'>{{ old('tip') ?? $model->tip }}</textarea>
+                                    placeholder='Masalan: {"uz":"Yaxshi o'ylab ko'ring", "en":"Think carefully"}'>{{ old('tip') ?? $model->tip }}</textarea>
                                 @error('tip')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
 
 
-                            <div class="col-md-6" style="margin-bottom: 10px;">
+                            <div class="col-md-6" astyle="margin-bottom: 10px;">
                                 <label class="control-label">Answer Template (enter one per line)</label>
                                 <textarea name="answer_template" class="form-control" rows="5">{{ old('answer_template') ?? (is_array($model->answer_template) ? implode("\n", $model->answer_template) : '') }}</textarea>
                                 @error('answer_template')
@@ -358,7 +358,7 @@
             let questions = document.getElementById('questionsTextarea').value;
 
             if (!homeworkCondition || !questions) {
-                alert("Iltimos, Homework Conditions va Questions maydonlarini to‘ldiring!");
+                alert("Iltimos, Homework Conditions va Questions maydonlarini to'ldiring!");
                 return;
             }
 
@@ -384,8 +384,17 @@
                 })
                 .then(data => {
                     document.getElementById('correctAnswersTextarea').value = data.correct_answers;
+                    
+                    let tipTextarea = document.querySelector('textarea[name="tip"]');
+                    tipTextarea.value = data.tip;
+                    
+                    let answerTemplateTextarea = document.querySelector('textarea[name="answer_template"]');
+                    answerTemplateTextarea.value = data.answer_template;
                 })
-                .catch(error => console.error("Error:", error));
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("Xatolik yuz berdi: " + error.message);
+                });
         });
     </script>
 @endsection
