@@ -198,15 +198,12 @@ class AdminHomeworkQuestionsController extends Controller
         \nHomework condition: \"$taskCondition\"
         \nQuestion: \"{$request->questions}\"
         \nProvide only the correct answer.";
+
         $tipPrompt = "Generate a very short and clear tip for the following question in both Uzbek and English languages. 
         \nQuestion: \"{$request->questions}\"
         \nFormat the response as a JSON object with 'uz' and 'en' keys.
         \nEach tip should be maximum 2-3 words.
         \nExample format: {\"uz\":\"Shaxsga moslash\", \"en\":\"Match the verb\"}";
-
-        $templatePrompt = "Generate the correct question format for the following question, one per line.
-        \nQuestion: \"{$request->questions}\"
-        \n Just we need one of the correct answer.";
 
         $answerResponse = Http::withOptions([
             'Content-Type' => 'application/json',
@@ -214,6 +211,7 @@ class AdminHomeworkQuestionsController extends Controller
         ])->post($url, [
             "contents" => [["parts" => [["text" => $answerPrompt]]]]
         ]);
+
         $tipResponse = Http::withOptions([
             'Content-Type' => 'application/json',
             'verify' => false,
@@ -221,31 +219,22 @@ class AdminHomeworkQuestionsController extends Controller
             "contents" => [["parts" => [["text" => $tipPrompt]]]]
         ]);
 
-        $templateResponse = Http::withOptions([
-            'Content-Type' => 'application/json',
-            'verify' => false,
-        ])->post($url, [
-            "contents" => [["parts" => [["text" => $templatePrompt]]]]
-        ]);
-
         $answerData = $answerResponse->json();
         $tipData = $tipResponse->json();
-        $templateData = $templateResponse->json();
 
         $answer = $answerData['candidates'][0]['content']['parts'][0]['text'] ?? 'No answer generated.';
         $tipJson = $tipData['candidates'][0]['content']['parts'][0]['text'] ?? '{"uz":"", "en":""}';
-        $templates = $templateData['candidates'][0]['content']['parts'][0]['text'] ?? '';
 
         $tip = json_decode($tipJson, true);
         $uzTip = $tip['uz'] ?? '';
 
-        $templatesArray = array_filter(explode("\n", $templates));
+        // Correct answer dan birinchi qiymatni template sifatida olish
+        $firstTemplate = explode("\n", $answer)[0] ?? '';
 
-        $firstTemplate = $templatesArray[0] ?? '';
         return response()->json([
             'correct_answers' => trim($answer),
             'tip' => $uzTip,
-            'answer_template' => $firstTemplate
+            'answer_template' => trim($firstTemplate)
         ]);
     }
 }
