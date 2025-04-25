@@ -66,29 +66,31 @@ class ImageController extends Controller
     }
 
     private function translateWords($words)
-    {
-        $apiKey = env('GEMINI_API_KEY');
-        $url = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=$apiKey";
+{
+    $apiKey = env('GEMINI_API_KEY');
+    $url = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=$apiKey";
 
-        $prompt = "Translate the following words from English to Uzbek in the format 'word => translation': \n" . implode(", ", $words) . "\n\nPlease also include the total number of only the english words at the end.";
+    $wordArray = explode(' ', $words); // BU YERDA TUZATILDI
+    $prompt = "Translate the following words from English to Uzbek in the format 'word => translation': \n" . implode(", ", $wordArray) . "\n\nPlease also include the total number of only the english words at the end.";
 
-        $response = Http::withOptions([
-            'Content-Type' => 'application/json',
-            'verify' => false,
-        ])->post($url, [
-            "contents" => [
-                ["parts" => [["text" => $prompt]]]
-            ]
-        ]);
+    $response = Http::withOptions([
+        'Content-Type' => 'application/json',
+        'verify' => false,
+    ])->post($url, [
+        "contents" => [
+            ["parts" => [["text" => $prompt]]]
+        ]
+    ]);
 
-        $data = json_decode($response->getBody(), true);
-        $text = $data['candidates'][0]['content']['parts'][0]['text'];
+    $data = json_decode($response->getBody(), true);
+    $text = $data['candidates'][0]['content']['parts'][0]['text'];
 
-        // Clean up the translation
-        $text = preg_replace('/^\* /m', '', $text);
+    // Clean up the translation
+    $text = preg_replace('/^\* /m', '', $text);
 
-        return $text;
-    }
+    return $text;
+}
+
 
     private function formatText($words)
     {
