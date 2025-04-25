@@ -40,8 +40,6 @@ class ImageController extends Controller
     {
         $ocr = new TesseractOCR($image->getRealPath());
         $ocr->lang('eng')           
-            ->psm(3)                
-            ->oem(3)                
             ->config('tessedit_char_whitelist', 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,!?\'"()-_ '); 
 
         $text = $ocr->run();
