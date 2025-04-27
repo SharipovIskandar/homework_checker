@@ -6,16 +6,13 @@ use App\Http\Controllers\Admin\AdminHomeworkTypeController;
 use App\Http\Controllers\Admin\AdminStudentController;
 use App\Http\Controllers\Admin\AdminStudentsHomeworkResults;
 use App\Http\Controllers\Admin\AdminVocabularyController;
-use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Student\StudentHomeworkController;
 use App\Http\Controllers\Student\StudentHomeworkResultsController;
 use App\Http\Controllers\Student\StudentHomeworkSubmissionController;
 use App\Http\Controllers\Student\StudentVocabularyTestController;
-use App\Models\StudentHomeworkResult;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DashboardController;
 
 // Route::get('/', [StudentVocabularyTestController::class, 'commingSoon']);
 

@@ -19,9 +19,8 @@ class ImageController extends Controller
             $words = $this->extractTextFromImage($image);
             $translatedWords = $this->translateWords($words);
 
-            // Matnni formatlash
             $formattedText = $this->formatText($translatedWords);
-            $totalVocabularies = count($words);
+            $totalVocabularies = count(explode(' ', $words));
 
             return response()->json([
                 'success' => true,
@@ -39,62 +38,62 @@ class ImageController extends Controller
     private function extractTextFromImage($image)
     {
         $ocr = new TesseractOCR($image->getRealPath());
-        $ocr->lang('eng')           
-            ->config('tessedit_char_whitelist', 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,!?\'"()-_ '); 
+        $ocr->lang('eng')
+            ->config('tessedit_char_whitelist', 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,!?\'"()-_ ');
 
         $text = $ocr->run();
 
-        // Matnni tozalash
-        $text = preg_replace('/[\/\\\[\]{}<>|]+/', ' ', $text); 
-        $text = preg_replace('/\s+/', ' ', $text);  
-        $text = trim($text); 
+        $text = preg_replace('/[\/\\\[\]{}<>|]+/', ' ', $text);
+        $text = preg_replace('/\s+/', ' ', $text);
+        $text = trim($text);
 
-        // Matnni qatorlarga ajratish
-        $lines = explode("\n", $text);
-        $result = [];
-        
-        foreach ($lines as $line) {
-            $line = trim($line);
-            if (!empty($line)) {
-                $result[] = $line;
-            }
-        }
-
-        return implode("\n", $result);
+        return $text;
     }
 
     private function translateWords($words)
-{
-    $apiKey = env('GEMINI_API_KEY');
-    $url = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=$apiKey";
+    {
+        $apiKey = env('GEMINI_API_KEY');
+        $url = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=$apiKey";
 
-    $wordArray = explode(' ', $words); // BU YERDA TUZATILDI
-    $prompt = "Translate the following words from English to Uzbek in the format 'word => translation': \n" . implode(", ", $wordArray) . "\n\nPlease also include the total number of only the english words at the end.";
+        $wordArray = explode(' ', $words);
+        $prompt = "Translate the following words from English to Uzbek in the format word => translation: \n" . implode(", ", $wordArray) . "\n\nPlease also include the total number of only the english words at the end.";
 
-    $response = Http::withOptions([
-        'Content-Type' => 'application/json',
-        'verify' => false,
-    ])->post($url, [
-        "contents" => [
-            ["parts" => [["text" => $prompt]]]
-        ]
-    ]);
+        $response = Http::withOptions([
+            'Content-Type' => 'application/json',
+            'verify' => false,
+        ])->post($url, [
+            "contents" => [
+                ["parts" => [["text" => $prompt]]]
+            ]
+        ]);
 
-    $data = json_decode($response->getBody(), true);
-    $text = $data['candidates'][0]['content']['parts'][0]['text'];
+        $data = json_decode($response->getBody(), true);
+        $text = $data['candidates'][0]['content']['parts'][0]['text'] ?? '';
 
-    // Clean up the translation
-    $text = preg_replace('/^\* /m', '', $text);
+        $text = preg_replace('/^\* /m', '', $text);
 
-    return $text;
-}
+        $formattedText = '';
+        $lines = explode("\n", $text);
+        foreach ($lines as $line) {
+            if (preg_match('/^(.+?)\s*=>\s*(.+)$/', $line, $matches)) {
+                // Remove unnecessary spaces before '=>'
+                $formattedText .= "'{$matches[1]}' => '{$matches[2]}',\n";
+            }
+        }
 
+        // Remove the last comma and newline
+        $formattedText = rtrim($formattedText, ",\n");
 
-    private function formatText($words)
+        return $formattedText;
+    }
+
+    private function formatText($text)
     {
         $formattedText = '';
         $currentLine = '';
-        $maxLineLength = 50; 
+        $maxLineLength = 50;
+
+        $words = explode(' ', $text);
 
         foreach ($words as $word) {
             if (strlen($currentLine . ' ' . $word) <= $maxLineLength) {

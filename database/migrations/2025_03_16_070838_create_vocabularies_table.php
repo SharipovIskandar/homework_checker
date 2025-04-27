@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('vocabularies', function (Blueprint $table) {
             $table->id();
-            $table->jsonb('word'); // {"hello": "salom", "world": "dunyo"}
-            $table->string('level'); // A1, A2, B1
-            $table->dateTime('due_date'); // Test muddati
+            $table->jsonb('word')->nullable(); // {"hello": "salom", "world": "dunyo"}
+            $table->string('level')->nullable(); // A1, A2, B1
+            $table->integer('total_vocabularies')->nullable(); // A1, A2, B1
+            $table->dateTime('due_date')->nullable(); // Test muddati
             $table->timestamps();
         });
 

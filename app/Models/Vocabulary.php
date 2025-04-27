@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Vocabulary extends Model
 {
 
-    protected $fillable = ['word', 'level', 'due_date'];
+    protected $fillable = ['word', 'level', 'due_date', 'total_vocabularies'];
 
     protected $casts = [
         'word' => 'array',

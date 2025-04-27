@@ -19,15 +19,30 @@ class StudentVocabularyTestController extends Controller
 
     public function index()
     {
-        $datas = $this->modelClass::query()->paginate(10);
+        $datas = $this->modelClass::query()
+            ->whereHas('testResults', function ($query) {
+                $query->where('user_id', auth()->user()->id)
+                    ->where('is_accepted', false);
+            })
+            ->orWhereDoesntHave('testResults') // Agar testResults bo'lmasa
+            ->paginate(10);
+
         return view('students.pages.vocabulary-practise.index', [
             'datas' => $datas,
         ]);
     }
 
+
+
     public function startTest(string $id)
     {
-        $model = $this->modelClass::findOrFail($id);
+        $model = $this->modelClass::with(['testResults'])
+            ->whereHas('testResults', function ($query) {
+                $query->where('user_id', auth()->user()->id)
+                    ->where('is_accepted', false);
+            })
+            ->orWhereDoesntHave('testResults')
+            ->findOrFail($id);
 
         if (is_string($model->word)) {
             $decodedWord = json_decode($model->word, true);
@@ -43,17 +58,16 @@ class StudentVocabularyTestController extends Controller
     {
         $model = $this->modelClass::findOrFail($id);
 
-        $correctAnswers = $request->input('correct_answers');
-        $incorrectAnswers = $request->input('incorrect_answers');
 
         $totalVocabularies = $model->total_vocabulries;
 
         $testResult = $model->testResults()->updateOrCreate(
-            ['vocabulary_id' => $model->id, 'user_id' => auth()->id()],
             [
-                'correct_answers' => $correctAnswers,
-                'incorrect_answers' => $incorrectAnswers,
-                'is_accepted' => $correctAnswers == $totalVocabularies ? true : false,
+                'vocabulary_id' => $model->id,
+                'user_id'=> auth()->user()->id,
+                'correct_answers' => request('correct_answers') ?? 0,
+                'incorrect_answers' => request('incorrect_answers') ?? null,
+                'is_accepted' => request('is_accepted') ?? false
             ]
         );
 
@@ -65,5 +79,4 @@ class StudentVocabularyTestController extends Controller
     {
         return view('students.pages.vocabulary-practise.comming-soon');
     }
-
 }

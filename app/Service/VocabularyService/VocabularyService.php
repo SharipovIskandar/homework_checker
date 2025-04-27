@@ -17,11 +17,12 @@ class VocabularyService
                 'word' => 'required|array',
                 'word.*' => 'string',
                 'level' => 'required|string',
+                'total_vocabularies' => 'required|integer',
                 'due_date' => 'nullable|date',
             ]);
 
             $data['word'] = $data['word'];
-
+            
             $vocabulary = Vocabulary::create($data);
 
             DB::commit();
